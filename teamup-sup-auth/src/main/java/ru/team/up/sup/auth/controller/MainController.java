@@ -102,16 +102,6 @@ public class MainController {
         return "admin";
     }
 
-
-    /**
-     * @return переход на страницу для пользователя с ролью MODERATOR
-     */
-    @GetMapping(value = "/moderator")
-    public String printModeratorPage(Model model) {
-        model.addAttribute("loggedUser", getCurrentAccount());
-        return "moderator";
-    }
-
     /**
      * метод для перехода на страницу регистрации
      *
@@ -137,7 +127,7 @@ public class MainController {
     public String registrationNewUser(@ModelAttribute User user, Model model, HttpServletRequest request, BindingResult result) {
         String password = user.getPassword();
 
-        if(userServiceAuth.checkLogin(user.getLogin())) {
+        if (userServiceAuth.checkLogin(user.getLogin())) {
             ObjectError error = new ObjectError("login", "Такой никнейм уже занят");
             result.addError(error);
         }
@@ -166,11 +156,7 @@ public class MainController {
         if (role.contains("ROLE_ADMIN")) {
             return "redirect:/admin";
         }
-        if (role.contains("ROLE_MODERATOR")) {
-            return "redirect:/moderator";
-        } else {
-            return "redirect:/user";
-        }
+        return "redirect:/user";
     }
 
     @GetMapping(value = "/login")

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.team.up.sup.core.entity.Account;
 import ru.team.up.sup.core.repositories.AdminRepository;
-import ru.team.up.sup.core.repositories.ModeratorRepository;
 import ru.team.up.sup.core.repositories.UserRepository;
 
 import java.time.LocalDateTime;
@@ -22,24 +21,19 @@ import java.util.List;
 public class UserDetailsImpl implements UserDetailsService {
     private final UserRepository userRepository;
     private final AdminRepository adminRepository;
-    private final ModeratorRepository moderatorRepository;
 
     @Autowired
-    public UserDetailsImpl(UserRepository userRepository, AdminRepository adminRepository, ModeratorRepository moderatorRepository) {
+    public UserDetailsImpl(UserRepository userRepository, AdminRepository adminRepository) {
         this.userRepository = userRepository;
         this.adminRepository = adminRepository;
-        this.moderatorRepository = moderatorRepository;
     }
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Account userDetailsAccount = userRepository.findByEmail(email) == null ?
-                adminRepository.findByEmail(email) == null ?
-                        moderatorRepository.findByEmail(email) == null ? null
-                                : moderatorRepository.findByEmail(email)
-                        : adminRepository.findByEmail(email)
-                : userRepository.findByEmail(email);
+                adminRepository.findByEmail(email) == null ? null: adminRepository.findByEmail(email)
+                        : userRepository.findByEmail(email);
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         log.info("Account authorization:{}", email);
         if (userDetailsAccount == null) {

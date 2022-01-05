@@ -33,10 +33,10 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
                                         Authentication authentication) throws IOException, ServletException {
 
 
-        if (authentication.toString().contains ("given_name")){
+        if (authentication.toString().contains("given_name")) {
 
             try {
-                Account account = (Account) userService.loadUserByUsername(((DefaultOidcUser)authentication.getPrincipal()).getEmail());
+                Account account = (Account) userService.loadUserByUsername(((DefaultOidcUser) authentication.getPrincipal()).getEmail());
 
                 SecurityContextHolder.getContext().setAuthentication(
                         new UsernamePasswordAuthenticationToken(
@@ -53,11 +53,9 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
         Set<String> roles = AuthorityUtils.authorityListToSet(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
         if (roles.contains("ROLE_ADMIN")) {
             httpServletResponse.sendRedirect("/admin");
-        } else if(roles.contains("ROLE_USER")){
+        } else if (roles.contains("ROLE_USER")) {
             httpServletResponse.sendRedirect("/user");
-        }else if(roles.contains("ROLE_MODERATOR")){
-            httpServletResponse.sendRedirect("/moderator");
-        }else{
+        } else {
             httpServletResponse.sendRedirect("/welcome");
         }
     }
