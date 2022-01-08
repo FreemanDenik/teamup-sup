@@ -1,12 +1,14 @@
 package ru.team.up.sup.core.entity;
 
 import lombok.*;
-import org.springframework.context.annotation.Lazy;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
+
+/**
+ * Сущность параметр
+ */
 
 @Entity
 @Getter
@@ -14,7 +16,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Parameter {
+public class Parameter<T> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,11 +25,15 @@ public class Parameter {
     @Column(nullable = false)
     private String parameterName;
 
+    @Enumerated(EnumType.STRING)
+    @Column
+    private ParameterType parameterType;
+
     @Column(nullable = false)
     private String systemName;
 
     @Column(nullable = false)
-    private String parameterValue;
+    private T parameterValue;
 
     @Column(nullable = false)
     private LocalDate creationDate;
@@ -36,6 +42,5 @@ public class Parameter {
     private LocalDateTime updateDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Admin userWhoLastChangeParameters;
-
+    private User userWhoLastChangeParameters;
 }

@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * @author Pavel Kondrashov
  */
 @Component
-public class WordMatcher {
+public class WordMatcher { // под снос вместе с пакетом
 
     /**
      * Паттерн для запрещенных слов

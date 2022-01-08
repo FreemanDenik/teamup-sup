@@ -60,12 +60,12 @@ public class UserParameterController {
      */
     @GetMapping("/{id}")
     @Operation(summary ="Получение параметра по id")
-    public ResponseEntity<Parameter> getOneParameter(@PathVariable Long id) {
-        log.debug("Старт метода ResponseEntity<Parameter> getOneParameter(@PathVariable Long id) с параметром {}", id);
+    public ResponseEntity<Parameter> getParameterById(@PathVariable Long id) {
+        log.debug("Старт метода ResponseEntity<Parameter> getParameterById(@PathVariable Long id) с параметром {}", id);
 
         ResponseEntity<Parameter> responseEntity;
         try {
-            responseEntity = ResponseEntity.ok(parameterService.getOneParameter(id));
+            responseEntity = ResponseEntity.ok(parameterService.getParameterById(id));
         } catch (PersistenceException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

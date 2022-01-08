@@ -6,6 +6,6 @@ import ru.team.up.sup.core.entity.Account;
 import ru.team.up.sup.core.entity.Admin;
 
 @Repository
-public interface AdminRepository extends JpaRepository<Admin, Long> {
+public interface AdminRepository extends JpaRepository<Admin, Long> { // под снос!
     Account findByEmail(String email);
 }

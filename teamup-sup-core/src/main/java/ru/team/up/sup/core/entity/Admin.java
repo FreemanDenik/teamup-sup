@@ -15,7 +15,7 @@ import javax.persistence.*;
 @SuperBuilder
 @Table(name = "ADMIN_ACCOUNT")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
-public class Admin extends Account {
+public class Admin extends Account { // под снос!
 
     public Admin() {
         super();

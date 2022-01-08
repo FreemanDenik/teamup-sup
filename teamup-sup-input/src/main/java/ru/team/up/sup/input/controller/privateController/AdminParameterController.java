@@ -55,7 +55,7 @@ public class AdminParameterController {
     public ResponseEntity<Parameter> getOneParameter(@PathVariable Long id) {
         log.debug("Старт метода ResponseEntity<Parameter> getOneParameter(@PathVariable Long id) с параметром {}", id);
 
-        ResponseEntity<Parameter> responseEntity = ResponseEntity.ok(parameterService.getOneParameter(id));
+        ResponseEntity<Parameter> responseEntity = ResponseEntity.ok(parameterService.getParameterById(id));
         log.debug("Получили ответ {}", responseEntity);
 
         return responseEntity;
@@ -88,7 +88,7 @@ public class AdminParameterController {
         log.debug("Старт метода ResponseEntity<Parameter> updateParameter(@RequestBody @NotNull Parameter parameter) с параметром {}", parameter);
 
         log.debug("Проверка наличия обновляемого параметра в БД");
-        parameterService.getOneParameter(parameter.getId());
+        parameterService.getParameterById(parameter.getId());
 
         ResponseEntity<Parameter> responseEntity = ResponseEntity.ok(parameterService.saveParameter(parameter));
         log.debug("Получили ответ {}", responseEntity);

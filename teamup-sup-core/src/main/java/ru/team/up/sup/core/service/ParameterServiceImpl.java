@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.exception.NoContentException;
-import ru.team.up.sup.core.exception.UserNotFoundException;
+import ru.team.up.sup.core.exception.ParameterNotFoundException;
 import ru.team.up.sup.core.repositories.ParameterRepository;
 
 import java.util.List;
@@ -43,16 +43,52 @@ public class ParameterServiceImpl implements ParameterService {
     }
 
     /**
+     * @return Возвращает коллекцию Parameter по systemName
+     * Если параметр с переданным systemName не найден в базе, генерирует исключение со статусом HttpStatus.NOT_FOUND
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Parameter> getParametersBySystemName(String systemName) throws NoContentException {
+        log.debug("Старт метода List<Parameter> getParametersBySystemName(String systemName)");
+
+        List<Parameter> parameters = parameterRepository.getParametersBySystemName(systemName);
+
+        if (parameters.isEmpty()){
+            throw new NoContentException();
+        }
+        log.debug("Получили список всех параметров по systemName из БД {}", systemName);
+
+        return parameters;
+    }
+
+    /**
      * @param id Уникальный ключ ID параметра
      * @return Находит в БД параметр по ID и возвращает его.
      * Если параметр с переданным ID не найден в базе, генерирует исключение со статусом HttpStatus.NOT_FOUND
      */
     @Override
     @Transactional(readOnly = true)
-    public Parameter getOneParameter(Long id) throws UserNotFoundException {
-        log.debug("Старт метода Parameter getOneParameter(Long id) с параметром {}", id);
+    public Parameter getParameterById(Long id) throws ParameterNotFoundException {
+        log.debug("Старт метода Parameter getParameterById(Long id) с параметром {}", id);
 
-        Parameter parameter = Optional.of(parameterRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id))).get();
+        Parameter parameter = Optional.of(parameterRepository.findById(id).orElseThrow(() -> new ParameterNotFoundException(id))).get();
+        log.debug("Получили параметр из БД {}", parameter);
+
+        return parameter;
+    }
+
+    /**
+     * @param parameterName Имя параметра
+     * @return Находит в БД параметр по имени и возвращает его.
+     * Если параметр с переданным именем не найден в базе, генерирует исключение со статусом HttpStatus.NOT_FOUND
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Parameter getParameterByParameterName(String parameterName) throws NoContentException {
+        log.debug("Старт метода Parameter getParameterByParameterName(String parameterName) с параметром {}", parameterName);
+
+//        Parameter parameter = Optional.of(parameterRepository.getParameterByParameterName(parameterName).orElseThrow(() -> new NoContentException())).get();
+        Parameter parameter = null; // заглушка под удаление после исправления строчки выше (проблема с orElseThrow)
         log.debug("Получили параметр из БД {}", parameter);
 
         return parameter;
@@ -79,11 +115,11 @@ public class ParameterServiceImpl implements ParameterService {
      */
     @Override
     @Transactional
-    public void deleteParameter(Long id) throws UserNotFoundException {
+    public void deleteParameter(Long id) throws ParameterNotFoundException {
         log.debug("Старт метода void deleteParameter(Parameter parameter) с параметром {}", id);
 
         log.debug("Проверка существования параметра в БД с id {}", id);
-        Optional.of(parameterRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)));
+        Optional.of(parameterRepository.findById(id).orElseThrow(() -> new ParameterNotFoundException(id)));
 
         parameterRepository.deleteById(id);
         log.debug("Удалили параметр из БД {}", id);

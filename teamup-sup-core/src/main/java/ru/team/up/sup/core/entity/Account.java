@@ -19,7 +19,7 @@ import javax.persistence.*;
 @SuperBuilder
 @Getter
 @Setter
-public class Account implements UserDetails {
+public class Account implements UserDetails { // под снос!
     /**
      * Уникальный идентификатор
      */

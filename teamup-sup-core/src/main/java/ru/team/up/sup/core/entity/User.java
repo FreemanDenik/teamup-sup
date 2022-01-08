@@ -3,8 +3,12 @@ package ru.team.up.sup.core.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -13,38 +17,58 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "USER_ACCOUNT")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "userInterests"})
-public class User extends Account {
+@Table(name = "users")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class User implements UserDetails {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-    /**
-     * Город
-     */
-    @Column(name = "CITY")
-    private String city;
+    @Column(name = "name")
+    private String name;
 
-    /**
-     * Возраст
-     */
-    @Column(name = "AGE", nullable = false)
-    private Integer age;
+    @Column(name = "lastName")
+    private String lastName;
 
-    /**
-     * Информация о пользователе
-     */
-    @Column(name = "ABOUT_USER")
-    private String aboutUser;
+    @Column(name = "email")
+    private String email;
 
-    /**
-     * Подписчики пользователя
-     */
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    @JoinTable(name = "USER_ACCOUNT_SUBSCRIBERS", joinColumns = @JoinColumn(name = "USER_ID"),
-            inverseJoinColumns = @JoinColumn(name = "SUBSCRIBER_ID"))
-    @Column(name = "USER_SUBSCRIBERS")
-    private Set<User> subscribers;
+    @Column(name = "password")
+    private String password;
 
+    @Column(name = "role")
+    private Role role;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singleton(role);
+    }
+
+    @Override
+    public String getUsername() {
+        return name;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
