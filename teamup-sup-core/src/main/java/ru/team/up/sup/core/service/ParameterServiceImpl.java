@@ -88,7 +88,6 @@ public class ParameterServiceImpl implements ParameterService {
 
         Parameter parameter = Optional.of(parameterRepository.getParameterByParameterName(
                 parameterName)).orElseThrow(() -> new NoContentException());
-//        Parameter parameter = null; // заглушка под удаление после исправления строчки выше (проблема с orElseThrow)
         log.debug("Получили параметр из БД {}", parameter);
 
         return parameter;
