@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- *
  * Класс сервиса для управления параметрами ru.team.up.core.entity.Parameter
  */
 @Slf4j
@@ -34,7 +33,7 @@ public class ParameterServiceImpl implements ParameterService {
 
         List<Parameter> parameters = parameterRepository.findAll();
 
-        if (parameters.isEmpty()){
+        if (parameters.isEmpty()) {
             throw new NoContentException();
         }
         log.debug("Получили список всех админов из БД {}", parameters);
@@ -53,7 +52,7 @@ public class ParameterServiceImpl implements ParameterService {
 
         List<Parameter> parameters = parameterRepository.getParametersBySystemName(systemName);
 
-        if (parameters.isEmpty()){
+        if (parameters.isEmpty()) {
             throw new NoContentException();
         }
         log.debug("Получили список всех параметров по systemName из БД {}", systemName);
@@ -87,8 +86,9 @@ public class ParameterServiceImpl implements ParameterService {
     public Parameter getParameterByParameterName(String parameterName) throws NoContentException {
         log.debug("Старт метода Parameter getParameterByParameterName(String parameterName) с параметром {}", parameterName);
 
-//        Parameter parameter = Optional.of(parameterRepository.getParameterByParameterName(parameterName).orElseThrow(() -> new NoContentException())).get();
-        Parameter parameter = null; // заглушка под удаление после исправления строчки выше (проблема с orElseThrow)
+        Parameter parameter = Optional.of(parameterRepository.getParameterByParameterName(
+                parameterName)).orElseThrow(() -> new NoContentException());
+//        Parameter parameter = null; // заглушка под удаление после исправления строчки выше (проблема с orElseThrow)
         log.debug("Получили параметр из БД {}", parameter);
 
         return parameter;
