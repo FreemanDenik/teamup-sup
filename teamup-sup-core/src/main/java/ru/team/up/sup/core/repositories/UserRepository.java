@@ -7,14 +7,11 @@ import ru.team.up.sup.core.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-
-    User getUserByEmail(String email);
-
-    User getUserById(Long id);
-
-    User findByLogin(String login);;
-
-    Object findUserAndRolesByName(String s);
-
-    Account findByEmail(String email);
+//    User getUserByEmail(String email);
+//
+//    User getUserById(Long id);
+//
+//    User findByLogin(String login);
+//
+//    Account findByEmail(String email);
 }

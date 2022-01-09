@@ -21,7 +21,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class AdminServiceImpl implements AdminService {
+public class AdminServiceImpl implements AdminService { // под снос!
     private AdminRepository adminRepository;
 
     /**

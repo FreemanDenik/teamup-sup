@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @author Alexey Tkachenko
  */
-public interface AdminService {
+public interface AdminService { // под снос!
     List<Admin> getAllAdmins();
 
     Admin getOneAdmin(Long id);

@@ -9,6 +9,6 @@ import org.springframework.web.server.ResponseStatusException;
  */
 public class NoContentException extends ResponseStatusException {
     public NoContentException() {
-        super(HttpStatus.NO_CONTENT, "Список пользователей пуст.");
+        super(HttpStatus.NO_CONTENT, "Список параметров пуст.");
     }
 }

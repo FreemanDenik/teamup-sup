@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 
 @Component
 @Transactional
-public class AdminsDefaultCreator {
+public class AdminsDefaultCreator { // под снос!
 
     private final AdminRepository adminRepository;
 
@@ -36,7 +36,7 @@ public class AdminsDefaultCreator {
                 .accountCreatedTime(LocalDate.now())
                 .lastAccountActivity(LocalDateTime.now())
                 .email("admin@gmail.com")
-                .role(Role.ROLE_ADMIN)
+          //      .role(Role.ROLE_ADMIN)
                 .build());
     }
 }
