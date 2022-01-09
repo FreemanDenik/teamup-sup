@@ -17,6 +17,8 @@
         <project.version>1.0.0-SNAPSHOT</project.version>
         <spring.boot.security>2.5.2</spring.boot.security>
         <postgre.version>42.3.1</postgre.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <modules>
@@ -26,6 +28,14 @@
         <module>teamup-sup-app</module>
         <module>teamup-sup-kafka</module>
     </modules>
+
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>localrep</id>-->
+<!--            <name>local repository</name>-->
+<!--            <url>file:${user.home}\.m2\repository</url>-->
+<!--        </repository>-->
+<!--    </repositories>-->
 
     <dependencyManagement>
         <dependencies>

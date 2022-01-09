@@ -27,16 +27,12 @@ public class UserServiceAuthImpl implements UserServiceAuth {
     public void saveUser(User user) throws IncorrectDataRegistrationException {
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(10)));
         user.setRole(Role.ROLE_USER);
-        user.setAccountCreatedTime(LocalDate.now());
         user.setLastAccountActivity(LocalDateTime.now());
         userRepository.save(user);
     }
 
     @Override
     public boolean checkLogin(String login) {
-        if (userRepository.findByLogin(login) != null) {
-            return true;
-        }
-        return false;
+        return  userRepository.findByEmail(login) != null;
     }
 }

@@ -1,6 +1,7 @@
 package ru.team.up.sup.core.entity;
 
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -33,7 +34,7 @@ public class Parameter<T> {
     private String systemName;
 
     @Column(nullable = false)
-    private T parameterValue;
+    private String parameterValue;
 
     @Column(nullable = false)
     private LocalDate creationDate;
@@ -41,6 +42,6 @@ public class Parameter<T> {
     @Column
     private LocalDateTime updateDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User userWhoLastChangeParameters;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private User userWhoLastChangeParameters;
 }

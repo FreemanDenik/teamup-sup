@@ -4,15 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;
-import ru.team.up.sup.core.entity.*;
-import ru.team.up.sup.core.repositories.*;
 import ru.team.up.sup.core.entity.Role;
 import ru.team.up.sup.core.entity.User;
 import ru.team.up.sup.core.repositories.UserRepository;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Component
 @Transactional
