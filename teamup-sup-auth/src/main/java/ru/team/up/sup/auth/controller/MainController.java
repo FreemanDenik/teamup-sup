@@ -15,7 +15,6 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import ru.team.up.sup.auth.service.UserServiceAuth;
 import ru.team.up.sup.auth.service.impl.UserDetailsImpl;
-import ru.team.up.sup.core.entity.Account;
 import ru.team.up.sup.core.entity.User;
 import org.springframework.security.core.Authentication;
 
@@ -43,14 +42,14 @@ public class MainController {
         this.userDetails = userDetails;
     }
 
-    private Account getCurrentAccount() {
+    private User getCurrentAccount() {
         String email;
         if (SecurityContextHolder.getContext().getAuthentication().toString().contains("given_name")) {
             email = ((DefaultOidcUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getEmail();
         } else {
-            email = ((Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getEmail();
+            email = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getEmail();
         }
-        return (Account) userDetails.loadUserByUsername(email);
+        return (User) userDetails.loadUserByUsername(email);
     }
 
     private void autoLogin(String email, String password, HttpServletRequest request) {
@@ -69,7 +68,7 @@ public class MainController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Account account = (Account) userDetails.loadUserByUsername(email);
+        User account = (User) userDetails.loadUserByUsername(email);
         log.debug("Успешная авторизация id:{},  email:{}", account.getId(), account.getEmail());
     }
 
@@ -127,7 +126,7 @@ public class MainController {
     public String registrationNewUser(@ModelAttribute User user, Model model, HttpServletRequest request, BindingResult result) {
         String password = user.getPassword();
 
-        if (userServiceAuth.checkLogin(user.getLogin())) {
+        if (userServiceAuth.checkLogin(user.getEmail())) {
             ObjectError error = new ObjectError("login", "Такой никнейм уже занят");
             result.addError(error);
         }

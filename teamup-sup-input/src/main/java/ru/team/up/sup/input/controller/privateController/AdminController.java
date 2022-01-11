@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.team.up.sup.core.entity.Admin;
-import ru.team.up.sup.core.service.AdminService;
+import ru.team.up.sup.core.entity.User;
+import ru.team.up.sup.core.service.UserService;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -27,18 +27,17 @@ import java.util.List;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping("/private/account/admin")
 public class AdminController {
-    private AdminService adminService;
-
+    private UserService userService;
     /**
      * @return Результат работы метода adminService.getAllAdmins() в виде коллекции админов
      * в теле ResponseEntity
      */
     @Operation(summary ="Получение списка всех администраторов")
     @GetMapping
-    public ResponseEntity<List<Admin>> getAllAdmins() {
+    public ResponseEntity<List<User>> getAllAdmins() {
         log.debug("Старт метода ResponseEntity<List<Admin>> getAllAdmins()");
 
-        ResponseEntity<List<Admin>> responseEntity = ResponseEntity.ok(adminService.getAllAdmins());
+        ResponseEntity<List<User>> responseEntity = ResponseEntity.ok(userService.getAllUsers());
         log.debug("Получили ответ {}", responseEntity);
 
         return responseEntity;
@@ -51,10 +50,10 @@ public class AdminController {
      */
     @Operation(summary ="Получение администратора по id")
     @GetMapping("/{id}")
-    public ResponseEntity<Admin> getOneAdmin(@PathVariable Long id) {
+    public ResponseEntity<User> getOneAdmin(@PathVariable Long id) {
         log.debug("Старт метода ResponseEntity<Admin> getOneAdmin(@PathVariable Long id) с параметром {}", id);
 
-        ResponseEntity<Admin> responseEntity = ResponseEntity.ok(adminService.getOneAdmin(id));
+        ResponseEntity<User> responseEntity = ResponseEntity.ok(userService.getOneUser(id));
         log.debug("Получили ответ {}", responseEntity);
 
         return responseEntity;
@@ -67,29 +66,29 @@ public class AdminController {
      */
     @Operation(summary ="Создание нового администратора")
     @PostMapping
-    public ResponseEntity<Admin> createAdmin(@RequestParam String admin, @RequestBody @NotNull Admin adminCreate) {
-        log.debug("Старт метода ResponseEntity<Admin> createAdmin(@RequestBody @NotNull Admin admin) с параметром {}", adminCreate);
+    public ResponseEntity<User> createAdmin(@RequestParam String admin, @RequestBody @NotNull User user) {
+        log.debug("Старт метода ResponseEntity<Admin> createAdmin(@RequestBody @NotNull Admin admin) с параметром {}", user);
 
-        ResponseEntity<Admin> responseEntity = new ResponseEntity<>(adminService.saveAdmin(adminCreate), HttpStatus.CREATED);
+        ResponseEntity<User> responseEntity = new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
         log.debug("Получили ответ {}", responseEntity);
 
         return responseEntity;
     }
 
     /**
-     * @param admin Обновляемый объект класса Admin
+     * @param user Обновляемый объект класса Admin
      * @return Результат работы метода adminService.saveAdmin(admin) в виде объекта Admin
      * в теле ResponseEntity
      */
     @Operation(summary ="Обновление данных администратора")
     @PatchMapping
-    public ResponseEntity<Admin> updateAdmin(@RequestBody @NotNull Admin admin) {
-        log.debug("Старт метода ResponseEntity<Admin> updateAdmin(@RequestBody @NotNull Admin admin) с параметром {}", admin);
+    public ResponseEntity<User> updateAdmin(@RequestBody @NotNull User user) {
+        log.debug("Старт метода ResponseEntity<Admin> updateAdmin(@RequestBody @NotNull Admin admin) с параметром {}", user);
 
         log.debug("Проверка наличия обновляемого администратора в БД");
-        adminService.getOneAdmin(admin.getId());
+        userService.getOneUser(user.getId());
 
-        ResponseEntity<Admin> responseEntity = ResponseEntity.ok(adminService.saveAdmin(admin));
+        ResponseEntity<User> responseEntity = ResponseEntity.ok(userService.saveUser(user));
         log.debug("Получили ответ {}", responseEntity);
 
         return responseEntity;
@@ -101,12 +100,12 @@ public class AdminController {
      */
     @Operation(summary ="Удаление администратора по id")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Admin> deleteAdmin(@PathVariable Long id) {
+    public ResponseEntity<User> deleteAdmin(@PathVariable Long id) {
         log.debug("Старт метода ResponseEntity<Admin> updateAdmin(@RequestBody @NotNull Admin admin) с параметром {}", id);
 
-        adminService.deleteAdmin(id);
+        userService.deleteUser(id);
 
-        ResponseEntity<Admin> responseEntity = new ResponseEntity<>(HttpStatus.OK);
+        ResponseEntity<User> responseEntity = new ResponseEntity<>(HttpStatus.OK);
         log.debug("Получили ответ {}", responseEntity);
 
         return responseEntity;

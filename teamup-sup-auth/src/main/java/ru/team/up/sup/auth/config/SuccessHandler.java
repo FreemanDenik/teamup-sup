@@ -11,7 +11,7 @@ import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import ru.team.up.sup.auth.service.impl.UserDetailsImpl;
-import ru.team.up.sup.core.entity.Account;
+import ru.team.up.sup.core.entity.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -30,13 +30,13 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest,
                                         HttpServletResponse httpServletResponse,
-                                        Authentication authentication) throws IOException, ServletException {
+                                        Authentication authentication) throws IOException  {
 
 
         if (authentication.toString().contains("given_name")) {
 
             try {
-                Account account = (Account) userService.loadUserByUsername(((DefaultOidcUser) authentication.getPrincipal()).getEmail());
+                User account = (User) userService.loadUserByUsername(((DefaultOidcUser) authentication.getPrincipal()).getEmail());
 
                 SecurityContextHolder.getContext().setAuthentication(
                         new UsernamePasswordAuthenticationToken(
@@ -48,7 +48,7 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
                 return;
             }
         }
-        Account account = (Account) authentication.getPrincipal();
+        User account = (User) authentication.getPrincipal();
         log.debug("Успешная авторизация id:{},  email:{}", account.getId(), account.getEmail());
         Set<String> roles = AuthorityUtils.authorityListToSet(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
         if (roles.contains("ROLE_ADMIN")) {
