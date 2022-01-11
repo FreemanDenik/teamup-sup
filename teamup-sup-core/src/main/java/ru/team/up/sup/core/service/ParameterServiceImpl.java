@@ -24,7 +24,6 @@ public class ParameterServiceImpl implements ParameterService {
         log.debug("Старт метода List<Parameter> getAllParameters()");
 
         List<Parameter> parameters = parameterRepository.findAll();
-
         if (parameters.isEmpty()){
             throw new NoContentException();
         }
@@ -39,7 +38,6 @@ public class ParameterServiceImpl implements ParameterService {
         log.debug("Старт метода List<Parameter> getParametersBySystemName(String systemName)");
 
         List<Parameter> parameters = parameterRepository.getParametersBySystemName(systemName);
-
         if (parameters.isEmpty()){
             throw new NoContentException();
         }
