@@ -65,7 +65,7 @@ public class ParameterRestControllerPublic {
     /**
      *
      */
-    @GetMapping("/{id}")
+    @GetMapping("/byid/{id}")
     @Operation(summary ="Получение параметра по id")
     public ResponseEntity<Parameter> getParameterById(@PathVariable Long id) {
         log.debug("пытаемся получить параметр по айди {}", id);
@@ -84,7 +84,7 @@ public class ParameterRestControllerPublic {
     /**
      *
      */
-    @GetMapping("/{parameterName}")
+    @GetMapping("/byname/{parameterName}")
     @Operation(summary ="Получение параметра по имени")
     public ResponseEntity<Parameter> getParameterByParameterName(@PathVariable("parameterName") String parameterName) {
         log.debug("пытаемся получить параметр по имени {}", parameterName);
