@@ -10,12 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.team.up.sup.core.entity.Parameter;
-import ru.team.up.sup.core.entity.User;
 import ru.team.up.sup.core.service.ParameterService;
-import ru.team.up.sup.core.service.UserService;
 
 import javax.persistence.PersistenceException;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -69,6 +66,50 @@ public class UserParameterController {
         } catch (PersistenceException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        log.debug("Получили ответ {}", responseEntity);
+
+        return responseEntity;
+    }
+
+    /**
+     * @param systemName Значение systemName параметра
+     * @return Результат работы метода parameterService.getParametersBySystemName(systemName) в виде коллекции параметров
+     * в теле ResponseEntity
+     */
+    @GetMapping("/{systemName}")
+    @Operation(summary ="Получение коллекции параметров по systemName")
+    public ResponseEntity<List<Parameter>> getParametersBySystemName(@PathVariable String systemName) {
+        log.debug("Старт метода ResponseEntity<Parameter> getParametersBySystemName(@PathVariable String systemName) с параметром {}", systemName);
+
+        ResponseEntity<List<Parameter>> responseEntity;
+        try {
+            responseEntity = ResponseEntity.ok(parameterService.getParametersBySystemName(systemName));
+        } catch (PersistenceException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        log.debug("Получили ответ {}", responseEntity);
+
+        return responseEntity;
+    }
+
+    /**
+     * @param parameterName Значение parameterName параметра
+     * @return Результат работы метода parameterService.getParameterByParameterName(parameterName) в виде объекта Parameter
+     * в теле ResponseEntity
+     */
+    @GetMapping("/{parameterName}")
+    @Operation(summary ="Получение параметра по parameterName")
+    public ResponseEntity<Parameter> getParameterByParameterName(@PathVariable String parameterName) {
+        log.debug("Старт метода ResponseEntity<Parameter> getParameterByParameterName(@PathVariable String parameterName) с параметром {}", parameterName);
+
+        ResponseEntity<Parameter> responseEntity;
+        try {
+        responseEntity = ResponseEntity.ok(parameterService.getParameterByParameterName(parameterName));
+        } catch (PersistenceException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         log.debug("Получили ответ {}", responseEntity);
 
         return responseEntity;

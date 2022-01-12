@@ -1,7 +1,7 @@
 package ru.team.up.sup.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -17,7 +17,9 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Parameter<T> {
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Table(name = "parameters")
+public class Parameter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +44,7 @@ public class Parameter<T> {
     @Column
     private LocalDateTime updateDate;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    private User userWhoLastChangeParameters;
+    @ManyToOne
+    @Column
+    private User userWhoLastChangeParameters;
 }
