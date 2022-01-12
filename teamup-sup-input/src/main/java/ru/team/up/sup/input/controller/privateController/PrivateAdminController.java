@@ -26,7 +26,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping("/private/account/admin")
-public class AdminController {
+public class PrivateAdminController {
     private UserService userService;
     /**
      * @return Результат работы метода adminService.getAllAdmins() в виде коллекции админов

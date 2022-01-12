@@ -29,7 +29,7 @@ import java.util.List;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Tag(name = "User Private Controller", description = "User API")
 @RequestMapping(value = "/private/account/user")
-public class UserController { // под снос
+public class PrivateUserController { // под снос
     private UserService userService;
 
     /**
