@@ -45,6 +45,6 @@ public class Parameter {
     private LocalDateTime updateDate;
 
     @ManyToOne
-    @Column
+    @JoinColumn(name = "user_who_last_change_parameters")
     private User userWhoLastChangeParameters;
 }
