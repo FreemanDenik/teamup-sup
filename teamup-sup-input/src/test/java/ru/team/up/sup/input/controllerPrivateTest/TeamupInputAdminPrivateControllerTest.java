@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.team.up.sup.core.entity.User;
 import ru.team.up.sup.core.service.UserService;
-import ru.team.up.sup.input.controller.privateController.PrivateAdminController;
+import ru.team.up.sup.input.controller.privateController.OutController;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class TeamupInputAdminPrivateControllerTest {
 
     @Autowired
     @InjectMocks
-    PrivateAdminController privateAdminController;
+    OutController privateAdminController;
 
     @Before
     public void setUp() {
@@ -47,31 +47,31 @@ public class TeamupInputAdminPrivateControllerTest {
     @Test
     public void testCreateAdmin() {
         when(adminService.saveUser(user)).thenReturn(user);
-        Assert.assertEquals(201, privateAdminController.createAdmin("admin", user).getStatusCodeValue());
+        Assert.assertEquals(201, privateAdminController.createUser("admin", user).getStatusCodeValue());
     }
 
     @Test
     public void testGetOneById() {
         when(adminService.getOneUser(user.getId())).thenReturn(user);
-        Assert.assertEquals(200, privateAdminController.getOneAdmin(user.getId()).getStatusCodeValue());
+        Assert.assertEquals(200, privateAdminController.getOneUser(user.getId()).getStatusCodeValue());
     }
 
     @Test
     public void testGetAllAdmins() {
         listAdmin.add(user);
         when(adminService.getAllUsers()).thenReturn(listAdmin);
-        Assert.assertEquals(200, privateAdminController.getAllAdmins().getStatusCodeValue());
+        Assert.assertEquals(200, privateAdminController.getAllUsers().getStatusCodeValue());
     }
 
     @Test
     public void testUpdateAdmin() {
         when(adminService.saveUser(user)).thenReturn(user);
-        Assert.assertEquals(200, privateAdminController.updateAdmin(user).getStatusCodeValue());
+        Assert.assertEquals(200, privateAdminController.updateUser(user).getStatusCodeValue());
     }
 
     @Test
     public void testDeleteAdmin() {
-        Assert.assertEquals(200, privateAdminController.deleteAdmin(user.getId()).getStatusCodeValue());
+        Assert.assertEquals(200, privateAdminController.deleteUser(user.getId()).getStatusCodeValue());
     }
 
 }

@@ -12,7 +12,6 @@ import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.service.ParameterService;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  *
@@ -27,69 +26,6 @@ import java.util.List;
 @RequestMapping("/private/account/admin/parameters")
 public class AdminParameterController {
     private ParameterService parameterService;
-
-    /**
-     * @return Результат работы метода parameterService.getAllParameters() в виде коллекции параметров
-     * в теле ResponseEntity
-     */
-    @Operation(summary ="Получение списка всех параметров")
-    @GetMapping
-    public ResponseEntity<List<Parameter>> getAllParameters() {
-        log.debug("Старт метода ResponseEntity<List<Parameter>> getAllParameters()");
-
-        ResponseEntity<List<Parameter>> responseEntity = ResponseEntity.ok(parameterService.getAllParameters());
-        log.debug("Получили ответ {}", responseEntity);
-
-        return responseEntity;
-    }
-
-    /**
-     * @param id Значение ID параметра
-     * @return Результат работы метода parameterService.getParameterById(id) в виде объекта Parameter
-     * в теле ResponseEntity
-     */
-    @Operation(summary ="Получение параметра по id")
-    @GetMapping("/{id}")
-    public ResponseEntity<Parameter> getParameterById(@PathVariable Long id) {
-        log.debug("Старт метода ResponseEntity<Parameter> getParameterById(@PathVariable Long id) с параметром {}", id);
-
-        ResponseEntity<Parameter> responseEntity = ResponseEntity.ok(parameterService.getParameterById(id));
-        log.debug("Получили ответ {}", responseEntity);
-
-        return responseEntity;
-    }
-
-    /**
-     * @param systemName Значение systemName параметра
-     * @return Результат работы метода parameterService.getParametersBySystemName(systemName) в виде коллекции параметров
-     * в теле ResponseEntity
-     */
-    @Operation(summary ="Получение коллекции параметров по systemName")
-    @GetMapping("/{systemName}")
-    public ResponseEntity<List<Parameter>> getParametersBySystemName(@PathVariable String systemName) {
-        log.debug("Старт метода ResponseEntity<Parameter> getParametersBySystemName(@PathVariable String systemName) с параметром {}", systemName);
-
-        ResponseEntity<List<Parameter>> responseEntity = ResponseEntity.ok(parameterService.getParametersBySystemName(systemName));
-        log.debug("Получили ответ {}", responseEntity);
-
-        return responseEntity;
-    }
-
-    /**
-     * @param parameterName Значение parameterName параметра
-     * @return Результат работы метода parameterService.getParameterByParameterName(parameterName) в виде объекта Parameter
-     * в теле ResponseEntity
-     */
-    @Operation(summary ="Получение параметра по parameterName")
-    @GetMapping("/{parameterName}")
-    public ResponseEntity<Parameter> getParameterByParameterName(@PathVariable String parameterName) {
-        log.debug("Старт метода ResponseEntity<Parameter> getParameterByParameterName(@PathVariable String parameterName) с параметром {}", parameterName);
-
-        ResponseEntity<Parameter> responseEntity = ResponseEntity.ok(parameterService.getParameterByParameterName(parameterName));
-        log.debug("Получили ответ {}", responseEntity);
-
-        return responseEntity;
-    }
 
     /**
      * @param parameter Создаваемый объект класса Parameter

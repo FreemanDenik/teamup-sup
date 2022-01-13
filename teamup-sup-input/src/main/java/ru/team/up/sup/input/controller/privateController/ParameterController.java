@@ -25,9 +25,9 @@ import java.util.List;
 @RestController
 @NoArgsConstructor
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-@Tag(name = "User Parameter Private Controller", description = "User Parameter API")
+@Tag(name = "Parameter Controller", description = "Parameter API")
 @RequestMapping(value = "/private/account/user/parameters")
-public class UserParameterController {
+public class ParameterController {
     private ParameterService parameterService;
 
     /**
@@ -36,7 +36,7 @@ public class UserParameterController {
      */
     @GetMapping
     @Operation(summary ="Получение списка всех параметров")
-    public ResponseEntity<List<Parameter>> getAllUsers() {
+    public ResponseEntity<List<Parameter>> getAllParameters() {
         log.debug("Старт метода ResponseEntity<List<Parameter>> getAllParameters()");
 
         ResponseEntity<List<Parameter>> responseEntity;
