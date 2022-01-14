@@ -22,14 +22,14 @@ public class AdminController {
         this.parameterService = parameterService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/parameters")
     public String getParameterList(Model model) {
         List<Parameter> parameters = parameterService.getAllParameters();
         model.addAttribute("parameters", parameters);
         return "admin";
     }
 
-    @GetMapping("/admin")
+    @GetMapping("/admin/parameters")
     public String createParameterFrom(Parameter parameter, Model model) {
         model.addAttribute("parameter", parameter);
         List<Parameter> parameters = parameterService.getAllParameters();
@@ -37,26 +37,26 @@ public class AdminController {
         return "admin";
     }
 
-    @PostMapping("/admin")
+    @PostMapping("/admin/parameters")
     public String createParameter(Parameter parameter) {
         parameterService.saveParameter(parameter);
         return "redirect:/admin";
     }
 
-    @PostMapping ("/admin/{id}/delete")
+    @PostMapping ("/admin/parameters/{id}/delete")
     public String removeParameter(@PathVariable("id") long id) {
         parameterService.deleteParameter(id);
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/{id}/edit")
+    @GetMapping("/admin/parameters/{id}/edit")
     public String updateParameterForm(@PathVariable("id") long id, Model model) {
         Parameter parameter = parameterService.getParameterById(id);
         model.addAttribute("parameter", parameter);
         return "redirect:/admin";
     }
 
-//    @PostMapping("/admin/{id}/edit")
+//    @PostMapping("/admin/parameters/{id}/edit")
 //    public String updateParameter(Parameter parameter) {
 //        parameterService.updateParameter(parameter);
 //        return "redirect:/admin";

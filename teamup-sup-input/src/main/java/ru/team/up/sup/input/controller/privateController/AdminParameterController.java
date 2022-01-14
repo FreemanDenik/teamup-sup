@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  *
- * @link localhost:8080/swagger-ui.html
+ * @link localhost:8081/swagger-ui.html
  * Документация API
  */
 

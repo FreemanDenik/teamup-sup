@@ -18,7 +18,7 @@ public class UserController {
         this.parameterService = parameterService;
     }
 
-    @GetMapping("/user")
+    @GetMapping("/user/parameters")
     public String getParameter (Model model, Principal principal) {
         model.addAttribute("parameter",parameterService.getParameterByParameterName(principal.getName()));
         return "user";
