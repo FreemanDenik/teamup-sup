@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.team.up.sup.core.entity.Parameter;
+import ru.team.up.sup.core.service.KafkaProducerSupServiceImpl;
 import ru.team.up.sup.core.service.ParameterService;
 
 import javax.validation.constraints.NotNull;
@@ -16,7 +17,7 @@ import java.util.List;
 
 /**
  *
- * @link localhost:8080/swagger-ui.html
+ * @link localhost:8081/swagger-ui.html
  * Документация API
  */
 
@@ -27,6 +28,8 @@ import java.util.List;
 @RequestMapping("/private/account/admin/parameters")
 public class AdminParameterController {
     private ParameterService parameterService;
+
+    private KafkaProducerSupServiceImpl kafkaProducerSupService;
 
     /**
      * @return Результат работы метода parameterService.getAllParameters() в виде коллекции параметров
@@ -70,6 +73,7 @@ public class AdminParameterController {
         log.debug("Старт метода ResponseEntity<Parameter> createParameter(@RequestBody @NotNull Parameter parameter) с параметром {}", parameterCreate);
 
         ResponseEntity<Parameter> responseEntity = new ResponseEntity<>(parameterService.saveParameter(parameterCreate), HttpStatus.CREATED);
+        kafkaProducerSupService.send(parameterCreate);
         log.debug("Получили ответ {}", responseEntity);
 
         return responseEntity;

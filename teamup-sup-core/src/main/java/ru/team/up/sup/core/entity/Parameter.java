@@ -2,6 +2,7 @@ package ru.team.up.sup.core.entity;
 
 import lombok.*;
 import org.hibernate.annotations.Type;
+import ru.team.up.dto.AppModuleNameDto;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -31,7 +32,7 @@ public class Parameter<T> {
     private ParameterType parameterType;
 
     @Column(nullable = false)
-    private String systemName;
+    private AppModuleNameDto systemName;
 
     @Column(nullable = false)
     private String parameterValue;
