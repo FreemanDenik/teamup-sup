@@ -2,7 +2,8 @@ package ru.team.up.sup.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
-
+import org.hibernate.annotations.Type;
+import ru.team.up.dto.AppModuleNameDto;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,7 +34,7 @@ public class Parameter {
     private ParameterType parameterType;
 
     @Column(nullable = false)
-    private String systemName;
+    private AppModuleNameDto systemName;
 
     @Column(nullable = false)
     private String parameterValue;

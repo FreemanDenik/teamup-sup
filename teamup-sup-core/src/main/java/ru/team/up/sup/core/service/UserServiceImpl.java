@@ -15,7 +15,6 @@ import java.util.Optional;
 
 /**
  * @author Alexey Tkachenko
- * <p>
  * Класс сервиса для управления пользователями ru.team.up.core.entity.User
  */
 

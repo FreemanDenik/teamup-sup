@@ -26,16 +26,7 @@
         <module>teamup-sup-auth</module>
         <module>teamup-sup-input</module>
         <module>teamup-sup-app</module>
-        <module>teamup-sup-kafka</module>
     </modules>
-
-<!--    <repositories>-->
-<!--        <repository>-->
-<!--            <id>localrep</id>-->
-<!--            <name>local repository</name>-->
-<!--            <url>file:${user.home}\.m2\repository</url>-->
-<!--        </repository>-->
-<!--    </repositories>-->
 
     <dependencyManagement>
         <dependencies>

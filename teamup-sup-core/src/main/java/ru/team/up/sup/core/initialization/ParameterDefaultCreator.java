@@ -3,6 +3,7 @@ package ru.team.up.sup.core.initialization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import ru.team.up.dto.AppModuleNameDto;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.repositories.ParameterRepository;
 import ru.team.up.sup.core.repositories.UserRepository;
@@ -33,7 +34,7 @@ public class ParameterDefaultCreator {
                 .parameterName("testName")
                 .parameterType(STRING)
                 .parameterValue("testValue")
-                .systemName("testSystemName")
+                .systemName(AppModuleNameDto.TEAMUP_CORE)
                 .creationDate(LocalDate.now())
                 .updateDate(LocalDateTime.now()
   //              .userWhoLastChangeParameters(userRepository.getOne(1L)

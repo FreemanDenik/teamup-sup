@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.team.up.sup.core.entity.Parameter;
+import ru.team.up.sup.core.service.KafkaProducerSupServiceImpl;
 import ru.team.up.sup.core.service.ParameterService;
 
 import javax.validation.constraints.NotNull;
@@ -27,6 +28,8 @@ import javax.validation.constraints.NotNull;
 public class AdminParameterController {
     private ParameterService parameterService;
 
+    private KafkaProducerSupServiceImpl kafkaProducerSupService;
+
     /**
      * @param parameter Создаваемый объект класса Parameter
      * @return Результат работы метода parameterService.saveParameter(parameter) в виде объекта Parameter
@@ -38,6 +41,7 @@ public class AdminParameterController {
         log.debug("Старт метода ResponseEntity<Parameter> createParameter(@RequestBody @NotNull Parameter parameter) с параметром {}", parameterCreate);
 
         ResponseEntity<Parameter> responseEntity = new ResponseEntity<>(parameterService.saveParameter(parameterCreate), HttpStatus.CREATED);
+        kafkaProducerSupService.send(parameterCreate);
         log.debug("Получили ответ {}", responseEntity);
 
         return responseEntity;
