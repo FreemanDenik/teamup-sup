@@ -13,7 +13,6 @@ import ru.team.up.sup.core.service.KafkaProducerSupServiceImpl;
 import ru.team.up.sup.core.service.ParameterService;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  *
@@ -30,37 +29,6 @@ public class AdminParameterController {
     private ParameterService parameterService;
 
     private KafkaProducerSupServiceImpl kafkaProducerSupService;
-
-    /**
-     * @return Результат работы метода parameterService.getAllParameters() в виде коллекции параметров
-     * в теле ResponseEntity
-     */
-    @Operation(summary ="Получение списка всех параметров")
-    @GetMapping
-    public ResponseEntity<List<Parameter>> getAllParameters() {
-        log.debug("Старт метода ResponseEntity<List<Parameter>> getAllParameters()");
-
-        ResponseEntity<List<Parameter>> responseEntity = ResponseEntity.ok(parameterService.getAllParameters());
-        log.debug("Получили ответ {}", responseEntity);
-
-        return responseEntity;
-    }
-
-    /**
-     * @param id Значение ID параметра
-     * @return Результат работы метода parameterService.getOneParameter(id) в виде объекта Parameter
-     * в теле ResponseEntity
-     */
-    @Operation(summary ="Получение параметра по id")
-    @GetMapping("/{id}")
-    public ResponseEntity<Parameter> getOneParameter(@PathVariable Long id) {
-        log.debug("Старт метода ResponseEntity<Parameter> getOneParameter(@PathVariable Long id) с параметром {}", id);
-
-        ResponseEntity<Parameter> responseEntity = ResponseEntity.ok(parameterService.getParameterById(id));
-        log.debug("Получили ответ {}", responseEntity);
-
-        return responseEntity;
-    }
 
     /**
      * @param parameter Создаваемый объект класса Parameter

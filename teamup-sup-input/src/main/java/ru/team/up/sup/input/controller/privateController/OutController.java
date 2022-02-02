@@ -3,7 +3,6 @@ package ru.team.up.sup.input.controller.privateController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.team.up.sup.core.entity.User;
 import ru.team.up.sup.core.service.UserService;
 
-import javax.persistence.PersistenceException;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -24,50 +22,38 @@ import java.util.List;
  */
 
 @Slf4j
+@Tag(name = "Out Controller",description = "Out API")
 @RestController
-@NoArgsConstructor
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-@Tag(name = "User Private Controller", description = "User API")
-@RequestMapping(value = "/private/account/user")
-public class UserController {
+@RequestMapping("/private/account/admin")
+public class OutController {
     private UserService userService;
-
     /**
-     * @return Результат работы метода userService.getAllUsers() в виде коллекции юзеров
+     * @return Результат работы метода userService.getAllUsers() в виде коллекции пользователей
      * в теле ResponseEntity
      */
+    @Operation(summary ="Получение списка всех пользователей")
     @GetMapping
-    @Operation(summary ="Получение списка всех юзеров")
     public ResponseEntity<List<User>> getAllUsers() {
         log.debug("Старт метода ResponseEntity<List<User>> getAllUsers()");
 
-        ResponseEntity<List<User>> responseEntity;
-        try {
-            responseEntity = ResponseEntity.ok(userService.getAllUsers());
-        } catch (PersistenceException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        ResponseEntity<List<User>> responseEntity = ResponseEntity.ok(userService.getAllUsers());
         log.debug("Получили ответ {}", responseEntity);
 
         return responseEntity;
     }
 
     /**
-     * @param id Значение ID юзера
+     * @param id Значение ID пользователя
      * @return Результат работы метода userService.getOneUser(id) в виде объекта User
      * в теле ResponseEntity
      */
+    @Operation(summary ="Получение пользователя по id")
     @GetMapping("/{id}")
-    @Operation(summary ="Получение юзера по id")
     public ResponseEntity<User> getOneUser(@PathVariable Long id) {
         log.debug("Старт метода ResponseEntity<User> getOneUser(@PathVariable Long id) с параметром {}", id);
 
-        ResponseEntity<User> responseEntity;
-        try {
-            responseEntity = ResponseEntity.ok(userService.getOneUser(id));
-        } catch (PersistenceException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        ResponseEntity<User> responseEntity = ResponseEntity.ok(userService.getOneUser(id));
         log.debug("Получили ответ {}", responseEntity);
 
         return responseEntity;
@@ -78,17 +64,12 @@ public class UserController {
      * @return Результат работы метода userService.saveUser(user) в виде объекта User
      * в теле ResponseEntity
      */
+    @Operation(summary ="Создание нового пользователя")
     @PostMapping
-    @Operation(summary ="Создание юзера")
     public ResponseEntity<User> createUser(@RequestParam String user, @RequestBody @NotNull User userCreate) {
         log.debug("Старт метода ResponseEntity<User> createUser(@RequestBody @NotNull User user) с параметром {}", userCreate);
 
-        ResponseEntity<User> responseEntity;
-        try {
-            responseEntity = new ResponseEntity<>(userService.saveUser(userCreate), HttpStatus.CREATED);
-        } catch (PersistenceException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        ResponseEntity<User> responseEntity = new ResponseEntity<>(userService.saveUser(userCreate), HttpStatus.CREATED);
         log.debug("Получили ответ {}", responseEntity);
 
         return responseEntity;
@@ -99,38 +80,32 @@ public class UserController {
      * @return Результат работы метода userService.saveUser(user) в виде объекта User
      * в теле ResponseEntity
      */
+    @Operation(summary ="Обновление данных пользователя")
     @PatchMapping
-    @Operation(summary ="Обновление юзера")
     public ResponseEntity<User> updateUser(@RequestBody @NotNull User user) {
         log.debug("Старт метода ResponseEntity<User> updateUser(@RequestBody @NotNull User user) с параметром {}", user);
 
-        ResponseEntity<User> responseEntity;
-        try {
-            responseEntity = ResponseEntity.ok(userService.saveUser(user));
-        } catch (PersistenceException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        log.debug("Проверка наличия обновляемого пользователя в БД");
+        userService.getOneUser(user.getId());
+
+        ResponseEntity<User> responseEntity = ResponseEntity.ok(userService.saveUser(user));
         log.debug("Получили ответ {}", responseEntity);
 
         return responseEntity;
     }
 
     /**
-     * @param id Удаляемого объекта класса User
+     * @param id Удаляемый объект класса User
      * @return Объект ResponseEntity со статусом OK
      */
+    @Operation(summary ="Удаление пользователя по id")
     @DeleteMapping("/{id}")
-    @Operation(summary ="Удаление юзера")
     public ResponseEntity<User> deleteUser(@PathVariable Long id) {
-        log.debug("Старт метода ResponseEntity<User> deleteUser(@PathVariable Long id) с параметром {}", id);
+        log.debug("Старт метода ResponseEntity<User> updateUser(@RequestBody @NotNull User user) с параметром {}", id);
 
-        ResponseEntity<User> responseEntity;
-        try {
-            userService.deleteUser(id);
-            responseEntity = new ResponseEntity<>(HttpStatus.ACCEPTED);
-        } catch (PersistenceException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        userService.deleteUser(id);
+
+        ResponseEntity<User> responseEntity = new ResponseEntity<>(HttpStatus.OK);
         log.debug("Получили ответ {}", responseEntity);
 
         return responseEntity;
