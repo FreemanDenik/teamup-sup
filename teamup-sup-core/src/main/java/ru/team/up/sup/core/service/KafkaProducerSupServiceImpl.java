@@ -37,7 +37,7 @@ public class KafkaProducerSupServiceImpl implements KafkaProducerSupService {
      * @param parameter объект для кофигурации работы модулей приложения
      */
     @Override
-    public void send(Parameter<?> parameter) {
+    public void send(Parameter parameter) {
         if (parameter == null) {
             log.debug("The parameter value is null.");
         } else {

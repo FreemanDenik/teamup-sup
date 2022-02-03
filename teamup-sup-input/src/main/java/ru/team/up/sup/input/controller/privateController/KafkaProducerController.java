@@ -27,7 +27,7 @@ public class KafkaProducerController {
     }
 
     @PostMapping("/send")
-    public ResponseEntity<Parameter<?>> send(@RequestBody(required = false) Parameter<?> parameter) {
+    public ResponseEntity<Parameter> send(@RequestBody(required = false) Parameter parameter) {
         kafkaProducerSupService.send(parameter);
         return new ResponseEntity<>(parameter, HttpStatus.OK);
     }
