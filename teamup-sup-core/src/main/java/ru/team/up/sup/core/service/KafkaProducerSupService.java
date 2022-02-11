@@ -13,5 +13,5 @@ public interface KafkaProducerSupService {
       * Отправка сообщения в kafka
       * @param parameter объект для кофигурации работы модулей приложения
       */
-     void send(Parameter<?> parameter);
+     void send(Parameter parameter);
 }

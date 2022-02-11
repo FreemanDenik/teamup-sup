@@ -19,12 +19,10 @@ import static ru.team.up.sup.core.entity.ParameterType.STRING;
 public class ParameterDefaultCreator {
 
     private ParameterRepository parameterRepository;
-    private UserRepository userRepository;
 
     @Autowired
     public ParameterDefaultCreator(ParameterRepository parameterRepository, UserRepository userRepository) {
         this.parameterRepository = parameterRepository;
-        this.userRepository = userRepository;
     }
 
     @Bean("ParameterDefaultCreator")
@@ -36,9 +34,8 @@ public class ParameterDefaultCreator {
                 .parameterValue("testValue")
                 .systemName(AppModuleNameDto.TEAMUP_CORE)
                 .creationDate(LocalDate.now())
-                .updateDate(LocalDateTime.now()
-  //              .userWhoLastChangeParameters(userRepository.getOne(1L)
-                ).build()
+                .updateDate(LocalDateTime.now())
+                .build()
         );
     }
 }

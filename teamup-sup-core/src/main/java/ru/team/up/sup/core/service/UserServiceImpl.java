@@ -84,4 +84,12 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
         log.debug("Удалили юзера из БД с ID {}", id);
     }
+
+    @Override
+    public User getUserByName(String name) {
+        log.debug("Старт поиска юзера по имени {}", name);
+
+        return userRepository.findUserByName(name);
+    }
+
 }
