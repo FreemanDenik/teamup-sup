@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.team.up.dto.AppModuleNameDto;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.service.ParameterService;
 
@@ -83,7 +84,7 @@ public class ParameterController {
 
         ResponseEntity<List<Parameter>> responseEntity;
         try {
-            responseEntity = ResponseEntity.ok(parameterService.getParametersBySystemName(systemName));
+            responseEntity = ResponseEntity.ok(parameterService.getParametersBySystemName(AppModuleNameDto.valueOf(systemName)));
         } catch (PersistenceException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
