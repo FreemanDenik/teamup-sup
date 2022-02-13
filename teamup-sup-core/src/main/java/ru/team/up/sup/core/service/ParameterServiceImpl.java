@@ -106,7 +106,9 @@ public class ParameterServiceImpl implements ParameterService {
     public Parameter editParameter(Parameter parameter) {
         log.debug("Старт метода Parameter editParameter(Parameter parameter) с параметром {}", parameter);
 
-        parameter.setCreationDate(parameterRepository.getParameterById(parameter.getId()).getCreationDate());
+        parameter.setCreationDate(Optional.of(parameterRepository.findById(parameter.getId())
+                        .orElseThrow(() -> new NoContentException()))
+                                            .get().getCreationDate());
         parameter.setUpdateDate(LocalDateTime.now());
 
         Parameter save = parameterRepository.save(parameter);

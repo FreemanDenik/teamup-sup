@@ -76,9 +76,7 @@ public class PublicAdminParameterController {
     }
 
 
-    public void setFields(Parameter parameter,
-                          @RequestParam(value = "parameterType", required = false) String parameterType,
-                          @RequestParam(value = "systemName", required = false) String systemName) {
+    public void setFields(Parameter parameter, String parameterType, String systemName) {
 
         parameter.setParameterType(ParameterType.valueOf(parameterType));
         parameter.setSystemName(AppModuleNameDto.valueOf(systemName));
