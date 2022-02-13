@@ -1,12 +1,12 @@
 package ru.team.up.sup.core.service;
 
+import ru.team.up.dto.AppModuleNameDto;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.exception.NoContentException;
 
 import java.util.List;
 
 /**
- *
  * Интерфейс для управления параметрами ru.team.up.core.entity.Parameter
  */
 public interface ParameterService {
@@ -21,7 +21,7 @@ public interface ParameterService {
      * @return Возвращает коллекцию объектов Parameter по имени системы
      * Если коллекция пуста, генерирует исключение со статусом HttpStatus.NO_CONTENT
      */
-    List<Parameter> getParametersBySystemName(String systemName) throws NoContentException;
+    List<Parameter> getParametersBySystemName(AppModuleNameDto systemName) throws NoContentException;
 
     /**
      * @param id Уникальный ключ объекта Parameter

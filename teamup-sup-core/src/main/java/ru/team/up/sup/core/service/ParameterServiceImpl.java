@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.team.up.dto.AppModuleNameDto;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.exception.NoContentException;
 import ru.team.up.sup.core.repositories.ParameterRepository;
@@ -36,7 +37,7 @@ public class ParameterServiceImpl implements ParameterService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Parameter> getParametersBySystemName(String systemName) throws NoContentException {
+    public List<Parameter> getParametersBySystemName(AppModuleNameDto systemName) throws NoContentException {
         log.debug("Старт метода List<Parameter> getParametersBySystemName(String systemName)");
 
         List<Parameter> parameters = parameterRepository.getParametersBySystemName(systemName);
