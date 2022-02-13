@@ -9,6 +9,8 @@ import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.exception.NoContentException;
 import ru.team.up.sup.core.repositories.ParameterRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,6 +78,12 @@ public class ParameterServiceImpl implements ParameterService {
     @Transactional
     public Parameter saveParameter(Parameter parameter) {
         log.debug("Старт метода Parameter saveParameter(Parameter parameter) с параметром {}", parameter);
+
+        if (parameter.getUpdateDate() == null) {
+            parameter.setCreationDate(LocalDate.now());
+        }
+
+        parameter.setUpdateDate(LocalDateTime.now());
 
         Parameter save = parameterRepository.save(parameter);
         log.debug("Сохранили параметр в БД {}", save);

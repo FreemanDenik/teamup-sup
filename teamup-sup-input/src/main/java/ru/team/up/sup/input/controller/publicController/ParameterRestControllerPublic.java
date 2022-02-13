@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.team.up.dto.AppModuleNameDto;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.exception.NoContentException;
 import ru.team.up.sup.core.service.ParameterService;
@@ -27,6 +28,7 @@ public class ParameterRestControllerPublic {
     /**
      *
      */
+
     @GetMapping
     @Operation(summary ="Получение списка всех параметров")
     public ResponseEntity<List<Parameter>> getAllParameters() {

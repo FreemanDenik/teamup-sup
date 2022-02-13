@@ -123,16 +123,26 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <h6>ParameterType</h6>
-                                                    <label class="col-form-label" for="parameterTypeEdit"></label>
-                                                    <input class="form-control" id="parameterTypeEdit" name="parameterType" type="text" value=""/>
+                                                    <label class="col-form-label" for="ParameterTypeEdit"></label>
+                                                    <select multiple="multiple" id="ParameterTypeEdit" name="parameterType">
+                                                        <option th:each="type : ${allTypes}"
+                                                                th:value="${type}"
+                                                                th:text="${type}">
+                                                        </option>
+                                                    </select>
                                                 </div>
                                                 <div class="form-group">
                                                     <h6>SystemName</h6>
                                                     <label class="col-form-label" for="systemNameEdit"></label>
-                                                    <input class="form-control" id="systemNameEdit" name="systemName" type="text" value=""/>
+                                                    <select multiple="multiple" id="systemNameEdit" name="systemName">
+                                                        <option th:each="system : ${allSystems}"
+                                                                th:value="${system}"
+                                                                th:text="${system}">
+                                                        </option>
+                                                    </select>
                                                 </div>
                                                 <div class="form-group">
-                                                    <h6>SystemName</h6>
+                                                    <h6>ParameterValue</h6>
                                                     <label class="col-form-label" for="parameterValueEdit"></label>
                                                     <input class="form-control" id="parameterValueEdit" name="parameterValue" type="text" value=""/>
                                                 </div>
@@ -213,11 +223,21 @@
                                         <br><br>
                                     <h6>Parameter Type</h6>
                                     <label for="parameterType" class="bg-warning"></label>
-                                    <input type="text" id="parameterType" name="parameterType" placeholder="Parameter Type">
+                                    <select multiple="multiple" id="ParameterType" name="parameterType">
+                                        <option th:each="type : ${allTypes}"
+                                                th:value="${type}"
+                                                th:text="${type}">
+                                        </option>
+                                    </select>
                                         <br><br>
                                     <h6>System Name</h6>
                                     <label for="systemName" class="bg-warning"></label>
-                                    <input type="text" id="systemName" name="systemName" placeholder="System Name">
+                                    <select multiple="multiple" id="systemName" name="systemName">
+                                        <option th:each="system : ${allSystems}"
+                                                th:value="${system}"
+                                                th:text="${system}">
+                                        </option>
+                                    </select>
                                     <br><br>
                                     <h6>Parameter Value</h6>
                                     <label for="parameterValue" class="bg-warning"></label>
