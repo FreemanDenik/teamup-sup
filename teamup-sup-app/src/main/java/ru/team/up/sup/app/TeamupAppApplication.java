@@ -15,7 +15,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @PropertySource({
         "classpath:db.properties",
         "classpath:auth.properties",
-        "classpath:email-service.properties",
         "classpath:kafka-sup.properties"
 })
 @EnableWebMvc
