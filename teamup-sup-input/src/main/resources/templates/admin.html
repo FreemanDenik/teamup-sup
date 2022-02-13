@@ -1,345 +1,253 @@
-<!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en" >
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <meta charset="UTF-8">
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
-          integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
-
-    <title>Admin panel</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <title>&nbsp; Admin`s panel</title>
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">with roles: ADMIN USER</a>
-    <a class="navbar-brand text-muted" onclick="window.location.href = '/logout';">Logout</a>
-</nav>
-<main>
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-2 bg-white"
-                 style="padding-top: 20px;
-                        padding-left: 0px;
-                        padding-right: 0px;
-                        height: 100vh">
-
-                <ul class="nav nav-pills flex-column">
-                    <div>
-
-                        <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#Admin">Admin</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               href="/user">User</a>
-                        </li>
-                    </div>
-
-                </ul>
+        <div class="navbar-nav col-6">
+            <a class="text-muted text-left" href="/logout">Logout</a>
+        </div>
+    </div>
+</nav>
+<br>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2">
+            <ul class="nav flex-column nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link" href="http://localhost:8081/admin">Admin`s page</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-10">
+            <div class="page-header">
+                <h1>
+                    Admin panel
+                </h1>
             </div>
-
-            <div class="col-md-10 bg-light"
-                 style="padding-top: 20px;
-                        height: 100vh">
-
-                <h2 class="h2">Admin panel</h2>
-
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#ParametersTable">Parameters table</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#NewParameter">New Parameter</a>
-                    </li>
-                </ul>
-                <div class="tab-content" id="myTabContent">
-
-                    <div class="tab-pane fade show active" id="ParametersTable" role="tabpanel">
-
-                        <header>
-                            <h5>All parameters</h5>
-                        </header>
-
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Parameter Name</th>
-                                <th>Parameter Type</th>
-                                <th>System Name</th>
-                                <th>Parameter Value</th>
-                                <th>Creation Date</th>
-                                <th>Update Date</th>
-                                <th>User Who Last Change Parameters</th>
-                                <th>Edit</th>
-                                <th>Delete</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="parameter : ${parameters}">
-                                <td th:text="${parameter.getId()}"></td>
-                                <td th:text="${parameter.getParameterName()}"></td>
-                                <td th:text="${parameter.getParameterType()}"></td>
-                                <td th:text="${parameter.getSystemName()}"></td>
-                                <td th:text="${parameter.getParameterValue()}"></td>
-                                <td th:text="${parameter.getCreationDate()}"></td>
-                                <td th:text="${parameter.getUpdateDate()}"></td>
-                                <td th:text="${parameter.getUserWhoLastChangeParameters().getName()}">&nbsp;</td>
-                                <td>
-                                    <button type="button" class="btn btn-info" data-toggle="modal"
-                                            th:data-target="${'#edit' + parameter.id}">Edit
-                                    </button>
-                                    <div class="modal fade" th:id="${'edit' + parameter.id}" data-backdrop="static"
-                                         data-keyboard="false" tabindex="-1" th:aria-labelledby="${'edit' + parameter.id}"
-                                         aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="edit-papameter">Edit parameter</h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-
-                                                <div class="modal-body">
-                                                    <div class="container-fluid">
-                                                        <div class="row justify-content-center">
-                                                            <div class="form-user col-md-8">
-                                                                <form th:action="@{/admin/{id}/edit(id=${parameter.id})}"
-                                                                      th:object="${parameter}"
-                                                                      th:method="POST"
-                                                                      th:id="${'editForm' + parameter.id}">
-                                                                    <div class="form-group">
-                                                                        <label for="edit-id"
-                                                                               class="text-center font-weight-bold">ID</label>
-                                                                        <input type="text" class="form-control"
-                                                                               th:value="${parameter.id}" id="edit-id"
-                                                                               readonly/>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="edit-parameterName"
-                                                                               class="text-center font-weight-bold">parameterName</label>
-                                                                        <input type="text" class="form-control"
-                                                                               name="parameterName" th:value="${parameter.parameterName}"
-                                                                               id="edit-parameterName"/>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="edit-parameterType"
-                                                                               class="text-center font-weight-bold">parameterType</label>
-                                                                        <input type="text" class="form-control"
-                                                                               name="parameterType" th:value="${parameter.parameterType}"
-                                                                               id="edit-parameterType"/>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="edit-systemName"
-                                                                               class="text-center font-weight-bold">systemName</label>
-                                                                        <input type="text" class="form-control"
-                                                                               name="systemName" th:value="${parameter.systemName}"
-                                                                               id="edit-systemName"/>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="edit-parameterValue"
-                                                                               class="text-center font-weight-bold">parameterValue</label>
-                                                                        <input type="text" class="form-control"
-                                                                               name="parameterValue" th:value="${parameter.parameterValue}"
-                                                                               id="edit-parameterValue"/>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="edit-creationDate"
-                                                                               class="text-center font-weight-bold">creationDate</label>
-                                                                        <input type="date" class="form-control"
-                                                                               name="creationDate" th:value="${parameter.creationDate}"
-                                                                               id="edit-creationDate"/>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="edit-updateDate"
-                                                                               class="text-center font-weight-bold">updateDate</label>
-                                                                        <input type="datetime-local" class="form-control"
-                                                                               name="updateDate"
-                                                                               th:value="${parameter.updateDate}"
-                                                                               id="edit-updateDate"/>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="edit-userWhoLastChangeParameters"
-                                                                               class="text-center font-weight-bold">userWhoLastChangeParameters</label>
-                                                                        <select multiple size="2" name="select-userWhoLastChangeParameters"
-                                                                                class="form-control" id="edit-userWhoLastChangeParameters">
-                                                                            <option th:text="${parameter.getUserWhoLastChangeParameters().getName()}"
-                                                                                    class="form-control">
-                                                                            </option>
-                                                                        </select>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                            data-dismiss="modal">Close
-                                                    </button>
-                                                    <input type="submit" th:form="${'editForm' + parameter.id}"
-                                                           class="btn btn-primary" value="Edit"/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-
-                                    <button type="button" class="btn btn-danger" data-toggle="modal"
-                                            th:data-target="${'#delete' + parameter.id}">Delete
-                                    </button>
-                                    <div class="modal fade" th:id="${'delete' + parameter.id}" data-backdrop="static"
-                                         data-keyboard="false" tabindex="-1" th:aria-labelledby="${'delete' + parameter.id}"
-                                         aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="delete-parameter">Delete parameter</h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="container-fluid">
-                                                        <div class="row justify-content-center">
-                                                            <div class="form-user col-md-8">
-                                                                <form th:action="@{admin/{id}/delete(id=${parameter.id})}"
-                                                                      th:object="${parameter}"
-                                                                      th:method="post"
-                                                                      th:id="${'deleteForm' + parameter.id}">
-                                                                    <div class="form-group">
-                                                                        <label for="delete-id"
-                                                                               class="text-center font-weight-bold">ID </label>
-                                                                        <input type="number" class="form-control"
-                                                                               name="id" th:value="${parameter.id}"
-                                                                               id="delete-id" readonly/>
-
-                                                                        <label for="delete-parameterName"
-                                                                               class="text-center font-weight-bold">parameterName</label>
-                                                                        <input type="text" class="form-control"
-                                                                               name="parameterName" th:value="${parameter.parameterName}"
-                                                                               id="delete-parameterName" readonly/>
-
-                                                                        <label for="delete-parameterType"
-                                                                               class="text-center font-weight-bold">parameterType</label>
-                                                                        <input type="text" class="form-control"
-                                                                               name="parameterType" th:value="${parameter.parameterType}"
-                                                                               id="delete-parameterType" readonly/>
-
-                                                                        <label for="delete-systemName"
-                                                                               class="text-center font-weight-bold">systemName</label>
-                                                                        <input type="text" class="form-control"
-                                                                               name="systemName" th:value="${parameter.systemName}"
-                                                                               id="delete-systemName" readonly/>
-
-                                                                        <label for="delete-parameterValue"
-                                                                               class="text-center font-weight-bold">parameterValue</label>
-                                                                        <input type="text" class="form-control"
-                                                                               name="parameterValue" th:value="${parameter.parameterValue}"
-                                                                               id="delete-parameterValue" readonly/>
-
-                                                                        <label for="delete-creationDate"
-                                                                               class="text-center font-weight-bold">creationDate</label>
-                                                                        <input type="date" class="form-control"
-                                                                               id="delete-creationDate" name="creationDate"
-                                                                               th:value="${parameter.creationDate}" readonly/>
-
-                                                                        <label for="delete-updateDate"
-                                                                               class="text-center font-weight-bold">updateDate</label>
-                                                                        <input type="datetime-local" class="form-control"
-                                                                               id="delete-updateDate" name="updateDate"
-                                                                               th:value="${parameter.updateDate}" readonly/>
-
-                                                                        <label for="delete-userWhoLastChangeParameters"
-                                                                               class="text-center font-weight-bold">userWhoLastChangeParameters</label>
-                                                                        <select multiple id="delete-userWhoLastChangeParameters"
-                                                                                name="select-userWhoLastChangeParameters" class="form-control"
-                                                                                readonly>
-                                                                            <option th:text="${parameter.getUserWhoLastChangeParameters().getName()}"></option>
-                                                                        </select>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                            data-dismiss="modal">Close
-                                                    </button>
-                                                    <input type="submit" th:form="${'deleteForm' + parameter.id}"
-                                                           class="btn btn-danger" value="Delete"/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="border rounded tab-pane fade" id="NewParameter" role="tabpanel">
-                        <header>
-                            <h4>Add new parameter</h4>
-                        </header>
-                        <div class="bg-white">
-                            <div class="container">
-                                <div class="row justify-content-center">
-                                    <div class="form-parameter col-md-4">
-                                        <form th:method="POST" th:action="@{/admin}" th:object="${adminParam}">
-                                            <div class="form-group">
-                                                <label for="parameterName" class="text-center font-weight-bold">parameterName</label>
-                                                <input type="text" class="form-control" th:field="*{parameterName}" id="parameterName"/>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="parameterType"
-                                                       class="text-center font-weight-bold">parameterType</label>
-                                                <input type="text" class="form-control" th:field="*{parameterType}"
-                                                       id="parameterType"/>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="systemName" class="text-center font-weight-bold">systemName</label>
-                                                <input type="text" class="form-control" th:field="*{systemName}" id="systemName"/>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="parameterValue" class="text-center font-weight-bold">parameterValue</label>
-                                                <input type="text" class="form-control" th:field="*{parameterValue}"
-                                                       id="parameterValue"/>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="creationDate"
-                                                       class="text-center font-weight-bold">creationDate</label>
-                                                <input type="date" class="form-control" th:field="*{creationDate}"
-                                                       id="creationDate"/>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="updateDate"
-                                                       class="text-center font-weight-bold">updateDate</label>
-                                                <input type="datetime-local" class="form-control" th:field="*{updateDate}"
-                                                       id="updateDate"/>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="select-userWhoLastChangeParameters"
-                                                       class="text-center font-weight-bold">userWhoLastChangeParameters</label>
-                                                <select multiple size="2" id="select-userWhoLastChangeParameters" name="select-userWhoLastChangeParameters"
-                                                        class="form-control">
-                                                    <option th:text="${adminParam.getUserWhoLastChangeParameters().getName()}"
-                                                            class="form-control"></option>
-                                                </select>
-                                            </div>
-
-                                            <button type="submit" class="btn btn-success text-center btn-new-user">Add new parameter</button>
-                                        </form>
+        </div>
+    </div>
+</div>
+<div class="container-fluid border">
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-10">
+            <div class="col-md-12">
+                <div class="tabbable" id="tabs-27824">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#parametersTable" data-toggle="tab">Parameters table</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#newParameter" data-toggle="tab">New Parameter</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content border">
+                        <div class="tab-pane show active" id="parametersTable">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-10">
+                                        <h5>All parameters</h5>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <table class="table table-hover table-sm text-center">
+                                            <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Parameter Name</th>
+                                                <th>Parameter Type</th>
+                                                <th>System Name</th>
+                                                <th>Parameter Value</th>
+                                                <th>Creation Date</th>
+                                                <th>Update Date</th>
+                                                <th>User Who Last Change Parameters</th>
+                                                <th>Edit</th>
+                                                <th>Delete</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="parameter : ${allParams}">
+                                                <td th:text="${parameter.getId()}"></td>
+                                                <td th:text="${parameter.getParameterName()}"></td>
+                                                <td th:text="${parameter.getParameterType()}"></td>
+                                                <td th:text="${parameter.getSystemName()}"></td>
+                                                <td th:text="${parameter.getParameterValue()}"></td>
+                                                <td th:text="${parameter.getCreationDate()}"></td>
+                                                <td th:text="${parameter.getUpdateDate()}"></td>
+                                                <td th:text="${parameter.getUserWhoLastChangeParameters()}"></td>
+                                                <td><a class="btn btn-primary eBtn" th:href="@{/findById/(id=${parameter.getId()})}">Edit</a></td>
+                                                <td><a class="btn btn-danger dBtn" th:href="@{/findById/(id=${parameter.getId()})}">Delete</a></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="myForm">
+                            <form action="#" method="post" th:action="@{/save}">
+                                <div aria-hidden="true" aria-labelledby="editModalLabel" class="modal fade"
+                                     id="editModal" role="dialog"
+                                     tabindex="-1">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content text-center">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editModalLabel">Edit parameter</h5>
+                                                <button aria-label="Close" class="close" data-dismiss="modal"
+                                                        type="button">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <h6>ID</h6>
+                                                    <label class="col-form-label" for="idEdit"></label>
+                                                    <input class="form-control" id="idEdit" name="id" type="number" value="" readonly/>
+                                                </div>
+                                                <div class="form-group">
+                                                    <h6>ParameterName</h6>
+                                                    <label class="col-form-label" for="parameterNameEdit"></label>
+                                                    <input class="form-control" id="parameterNameEdit" name="parameterName" type="text" value=""/>
+                                                </div>
+                                                <div class="form-group">
+                                                    <h6>ParameterType</h6>
+                                                    <label class="col-form-label" for="ParameterTypeEdit"></label>
+                                                    <select multiple="multiple" id="ParameterTypeEdit" name="parameterType">
+                                                        <option th:each="type : ${allTypes}"
+                                                                th:value="${type}"
+                                                                th:text="${type}">
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <h6>SystemName</h6>
+                                                    <label class="col-form-label" for="systemNameEdit"></label>
+                                                    <select multiple="multiple" id="systemNameEdit" name="systemName">
+                                                        <option th:each="system : ${allSystems}"
+                                                                th:value="${system}"
+                                                                th:text="${system}">
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <h6>ParameterValue</h6>
+                                                    <label class="col-form-label" for="parameterValueEdit"></label>
+                                                    <input class="form-control" id="parameterValueEdit" name="parameterValue" type="text" value=""/>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-secondary" data-dismiss="modal"
+                                                        type="button">Close
+                                                </button>
+                                                <input class="btn btn-primary" type="submit" value="Edit"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="myDeleteForm">
+                            <form action="#" method="get" th:action="@{/delete}">
+                                <div aria-hidden="true" aria-labelledby="deleteModalLabel" class="modal fade"
+                                     id="deleteModal" role="dialog"
+                                     tabindex="-1">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content text-center">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteModalLabel">Delete user</h5>
+                                                <button aria-label="Close" class="close" data-dismiss="modal"
+                                                        type="button">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <h6>ID</h6>
+                                                    <label class="col-form-label" for="idDelete"></label>
+                                                    <input class="form-control" id="idDelete" name="id" type="number" value="" readonly/>
+                                                </div>
+                                                <div class="form-group">
+                                                    <h6>ParameterName</h6>
+                                                    <label class="col-form-label" for="parameterNameDelete"></label>
+                                                    <input class="form-control" id="parameterNameDelete" name="parameterName" type="text" value="" readonly/>
+                                                </div>
+                                                <div class="form-group">
+                                                    <h6>ParameterType</h6>
+                                                    <label class="col-form-label" for="parameterTypeDelete"></label>
+                                                    <input class="form-control" id="parameterTypeDelete" name="parameterType" type="text" value="" readonly/>
+                                                </div>
+                                                <div class="form-group">
+                                                    <h6>SystemName</h6>
+                                                    <label class="col-form-label" for="systemNameDelete"></label>
+                                                    <input class="form-control" id="systemNameDelete" name="systemName" type="text" value="" readonly/>
+                                                </div>
+                                                <div class="form-group">
+                                                    <h6>ParameterValue</h6>
+                                                    <label class="col-form-label" for="parameterValueDelete"></label>
+                                                    <input class="form-control" id="parameterValueDelete" name="parameterValue" type="text" value="" readonly/>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-secondary" data-dismiss="modal"
+                                                        type="button">Close
+                                                </button>
+                                                <input class="btn btn-danger" type="submit" value="Delete" id="delRef"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="tab-pane" id="newParameter">
+                            <h5>&nbsp; Add new parameter</h5>
+                            <div class="container-fluid text-center border">
+                                <br>
+                                <h6>Parameter Name</h6>
+                                <form action="#" th:action="@{/save}" th:object="${newParameter}" method="post">
+                                    <label for="parameterName" class="bg-warning"></label>
+                                    <input th:field="*{parameterName}" type="text"  id="parameterName" placeholder="Parameter Name">
+                                        <br><br>
+                                    <h6>Parameter Type</h6>
+                                    <label for="parameterType" class="bg-warning"></label>
+                                    <select multiple="multiple" id="ParameterType" name="parameterType">
+                                        <option th:each="type : ${allTypes}"
+                                                th:value="${type}"
+                                                th:text="${type}">
+                                        </option>
+                                    </select>
+                                        <br><br>
+                                    <h6>System Name</h6>
+                                    <label for="systemName" class="bg-warning"></label>
+                                    <select multiple="multiple" id="systemName" name="systemName">
+                                        <option th:each="system : ${allSystems}"
+                                                th:value="${system}"
+                                                th:text="${system}">
+                                        </option>
+                                    </select>
+                                    <br><br>
+                                    <h6>Parameter Value</h6>
+                                    <label for="parameterValue" class="bg-warning"></label>
+                                    <input th:field="*{parameterValue}" type="text" id="parameterValue" placeholder="Parameter Value">
+                                    <br><br>
+                                    <div class="col-2 offset-5">
+                                        <input class="btn btn-success btn-block" type="submit" value="New parameter">
+                                        <br><br>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -347,15 +255,41 @@
             </div>
         </div>
     </div>
-</main>
-<footer></footer>
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
-        crossorigin="anonymous"></script>
-</body>
-</html>
+</div>
+<script>
+    $(document).ready(function () {
+
+
+        $('.table .eBtn').on('click', function (event) {
+            event.preventDefault();
+            let href = $(this).attr('href');
+
+            $.get(href, function (parameter) {
+                $('.myForm #idEdit').val(parameter.id);
+                $('.myForm #parameterNameEdit').val(parameter.parameterName);
+                $('.myForm #parameterTypeEdit').val(parameter.parameterType);
+                $('.myForm #systemNameEdit').val(parameter.systemName);
+                $('.myForm #parameterValueEdit').val(parameter.parameterValue);
+            });
+            $('.myForm #editModal').modal();
+
+        });
+
+        $('.table .dBtn').on('click', function (event) {
+            event.preventDefault();
+            let href = $(this).attr('href');
+            $.get(href, function (parameter) {
+                $('.myDeleteForm #idDelete').val(parameter.id);
+                $('.myDeleteForm #parameterNameDelete').val(parameter.parameterName);
+                $('.myDeleteForm #parameterTypeDelete').val(parameter.parameterType);
+                $('.myDeleteForm #systemNameDelete').val(parameter.systemName);
+                $('.myDeleteForm #parameterValueDelete').val(parameter.parameterValue);
+            });
+            $('#deleteModal #delRef').attr('href', href);
+            $('#deleteModal').modal();
+        });
+    });
+</script>
+<br>
 </body>
 </html>

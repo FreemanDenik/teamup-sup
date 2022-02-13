@@ -30,7 +30,7 @@ public class PublicAdminParameterController {
         model.addAttribute("allParams", parameterService.getAllParameters());
         model.addAttribute("allSystems", AppModuleNameDto.values());
         model.addAttribute("allTypes", ParameterType.values());
-        return "newAdmin";
+        return "admin";
     }
 
     @PostMapping("/save")
