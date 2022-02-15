@@ -48,4 +48,6 @@ public interface ParameterService {
      *           Метод удаляет параметр из БД
      */
     void deleteParameter(Long id);
+
+    Parameter editParameter(Parameter parameter);
 }

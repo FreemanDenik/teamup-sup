@@ -37,7 +37,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers( "/registration", "/login", "/oauth2reg", "/oauth2/authorization/google", "/authority").permitAll()
                 .antMatchers("/admin/**", "/private/**").hasRole("ADMIN")
-                .antMatchers("/user").hasRole("USER")
                 .anyRequest().authenticated()
                 .and().formLogin().loginPage("/login").successHandler(successHandler)
                 .loginProcessingUrl("/login").usernameParameter("auth_email").passwordParameter("auth_password").permitAll()

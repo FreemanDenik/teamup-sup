@@ -10,6 +10,8 @@ import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.exception.NoContentException;
 import ru.team.up.sup.core.repositories.ParameterRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,7 +78,11 @@ public class ParameterServiceImpl implements ParameterService {
     @Override
     @Transactional
     public Parameter saveParameter(Parameter parameter) {
+
         log.debug("Старт метода Parameter saveParameter(Parameter parameter) с параметром {}", parameter);
+
+        parameter.setCreationDate(LocalDate.now());
+        parameter.setUpdateDate(LocalDateTime.now());
 
         Parameter save = parameterRepository.save(parameter);
         log.debug("Сохранили параметр в БД {}", save);
@@ -94,5 +100,21 @@ public class ParameterServiceImpl implements ParameterService {
 
         parameterRepository.deleteById(id);
         log.debug("Удалили параметр из БД {}", id);
+    }
+
+    @Override
+    @Transactional
+    public Parameter editParameter(Parameter parameter) {
+        log.debug("Старт метода Parameter editParameter(Parameter parameter) с параметром {}", parameter);
+
+        parameter.setCreationDate(Optional.of(parameterRepository.findById(parameter.getId())
+                        .orElseThrow(() -> new NoContentException()))
+                                            .get().getCreationDate());
+        parameter.setUpdateDate(LocalDateTime.now());
+
+        Parameter save = parameterRepository.save(parameter);
+        log.debug("Изменили параметр в БД {}", save);
+
+        return save;
     }
 }

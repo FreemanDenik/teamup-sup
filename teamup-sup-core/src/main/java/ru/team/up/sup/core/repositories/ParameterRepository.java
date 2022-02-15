@@ -17,9 +17,5 @@ public interface ParameterRepository extends JpaRepository<Parameter, Long> {
 
     Parameter getParameterByParameterName(String parameterName);
 
-    List<Parameter> findByParameterNameContains(String parameterName);
-
-    List<Parameter> findByCreationDateBetween(LocalDate date1, LocalDate date2);
-
-    List<Parameter> findByUpdateDateBetween(LocalDateTime date1, LocalDateTime date2);
+    Parameter getParameterById(Long id);
 }
