@@ -12,4 +12,6 @@ public interface ParameterRepository extends JpaRepository<Parameter, Long> {
     List<Parameter> getParametersBySystemName(String systemName);
 
     Parameter getParameterByParameterName(String parameterName);
+
+    Parameter getParameterById(Long id);
 }

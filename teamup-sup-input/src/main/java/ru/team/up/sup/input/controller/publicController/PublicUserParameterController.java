@@ -21,7 +21,7 @@ public class PublicUserParameterController {
     @GetMapping("/user/parameters")
     public String userParametersPage(ModelMap model) {
         model.addAttribute("allParameters", parameterService.getAllParameters());
-        return "user";
+        return "newUser";
     }
 
 

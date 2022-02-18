@@ -30,7 +30,7 @@ public class PublicAdminParameterController {
         model.addAttribute("allParams", parameterService.getAllParameters());
         model.addAttribute("allSystems", AppModuleNameDto.values());
         model.addAttribute("allTypes", ParameterType.values());
-        return "admin";
+        return "newAdmin";
     }
 
     @PostMapping("/save")
@@ -38,17 +38,27 @@ public class PublicAdminParameterController {
                                   @RequestParam(value = "parameterType", required = false) String parameterType,
                                   @RequestParam(value = "systemName", required = false) String systemName) {
 
-        parameter.setParameterType(ParameterType.valueOf(parameterType));
-        parameter.setSystemName(AppModuleNameDto.valueOf(systemName));
-        parameter.setUserWhoLastChangeParameters(userService.getUserByName(
-                                                                        SecurityContextHolder.getContext().
-                                                                        getAuthentication().getName()));
+        setFields(parameter, parameterType, systemName);
 
         log.debug("Добавили параметр с именем {}", parameter.getParameterName());
 
         parameterService.saveParameter(parameter);
         return "redirect:/admin/parameters";
     }
+
+    @PostMapping("/edit")
+    public String editParameter(Parameter parameter,
+                                  @RequestParam(value = "parameterType", required = false) String parameterType,
+                                  @RequestParam(value = "systemName", required = false) String systemName) {
+
+        setFields(parameter, parameterType, systemName);
+
+        log.debug("Изменили параметр с именем {}", parameter.getParameterName());
+
+        parameterService.editParameter(parameter);
+        return "redirect:/admin/parameters";
+    }
+
 
     @GetMapping("/delete")
     public String deleteUser(long id) {
@@ -63,5 +73,17 @@ public class PublicAdminParameterController {
     @ResponseBody
     public Parameter findOne(Long id) {
         return parameterService.getParameterById(id);
+    }
+
+
+    public void setFields(Parameter parameter,
+                          @RequestParam(value = "parameterType", required = false) String parameterType,
+                          @RequestParam(value = "systemName", required = false) String systemName) {
+
+        parameter.setParameterType(ParameterType.valueOf(parameterType));
+        parameter.setSystemName(AppModuleNameDto.valueOf(systemName));
+        parameter.setUserWhoLastChangeParameters(userService.getUserByName(
+                SecurityContextHolder.getContext().
+                        getAuthentication().getName()));
     }
 }

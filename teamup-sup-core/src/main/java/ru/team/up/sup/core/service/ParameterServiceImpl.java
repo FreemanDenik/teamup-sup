@@ -77,12 +77,10 @@ public class ParameterServiceImpl implements ParameterService {
     @Override
     @Transactional
     public Parameter saveParameter(Parameter parameter) {
+
         log.debug("Старт метода Parameter saveParameter(Parameter parameter) с параметром {}", parameter);
 
-        if (parameter.getUpdateDate() == null) {
-            parameter.setCreationDate(LocalDate.now());
-        }
-
+        parameter.setCreationDate(LocalDate.now());
         parameter.setUpdateDate(LocalDateTime.now());
 
         Parameter save = parameterRepository.save(parameter);
@@ -101,5 +99,19 @@ public class ParameterServiceImpl implements ParameterService {
 
         parameterRepository.deleteById(id);
         log.debug("Удалили параметр из БД {}", id);
+    }
+
+    @Override
+    @Transactional
+    public Parameter editParameter(Parameter parameter) {
+        log.debug("Старт метода Parameter editParameter(Parameter parameter) с параметром {}", parameter);
+
+        parameter.setCreationDate(parameterRepository.getParameterById(parameter.getId()).getCreationDate());
+        parameter.setUpdateDate(LocalDateTime.now());
+
+        Parameter save = parameterRepository.save(parameter);
+        log.debug("Изменили параметр в БД {}", save);
+
+        return save;
     }
 }
