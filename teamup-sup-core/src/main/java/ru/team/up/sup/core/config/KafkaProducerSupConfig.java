@@ -1,4 +1,4 @@
-package ru.team.up.sup.core;
+package ru.team.up.sup.core.config;
 
 
 import org.apache.kafka.clients.producer.ProducerConfig;
