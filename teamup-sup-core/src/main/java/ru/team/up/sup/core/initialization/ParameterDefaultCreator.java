@@ -14,6 +14,7 @@ import ru.team.up.sup.core.service.UserService;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import static ru.team.up.sup.core.entity.ParameterType.*;
 
@@ -29,7 +30,7 @@ public class ParameterDefaultCreator {
     @Bean("ParameterDefaultCreator")
     public void parameterDefaultCreator() {
         parameterService.saveParameter(Parameter.builder()
-                .id(1L)
+//                .id(1L)
                 .parameterName("testName")
                 .parameterType(STRING)
                 .parameterValue("testValue")
@@ -39,7 +40,7 @@ public class ParameterDefaultCreator {
                 .build()
         );
         parameterService.saveParameter(Parameter.builder()
-                .id(2L)
+//                .id(2L)
                 .parameterName("testName2")
                 .parameterType(STRING)
                 .parameterValue("testValue2")
@@ -50,7 +51,7 @@ public class ParameterDefaultCreator {
                 ).build()
         );
         parameterService.saveParameter(Parameter.builder()
-                .id(3L)
+//                .id(3L)
                 .parameterName("СIAMetingFlag")
                 .parameterType(STRING)
                 .parameterValue("AgentFreed0m")
@@ -61,7 +62,7 @@ public class ParameterDefaultCreator {
                 ).build()
         );
         parameterService.saveParameter(Parameter.builder()
-                .id(4L)
+//                .id(4L)
                 .parameterName("MonetizationLevel")
                 .parameterType(INTEGER)
                 .parameterValue("0")
@@ -72,7 +73,7 @@ public class ParameterDefaultCreator {
                 ).build()
         );
         parameterService.saveParameter(Parameter.builder()
-                .id(5L)
+//                .id(5L)
                 .parameterName("DestroySystem")
                 .parameterType(BOOLEAN)
                 .parameterValue("false")
@@ -81,6 +82,33 @@ public class ParameterDefaultCreator {
                 .updateDate(LocalDate.of(2019, 12, 12).atTime(13, 12)
                         //              .userWhoLastChangeParameters(userRepository.getOne(1L)
                 ).build()
+        );
+        parameterService.saveParameter(Parameter.builder()
+                .parameterName("TEAMUP_CORE_GET_EVENT_BY_ID_ENABLED")
+                .parameterType(BOOLEAN)
+                .parameterValue("false")
+                .systemName(AppModuleNameDto.TEAMUP_CORE)
+                .creationDate(LocalDate.now())
+                .updateDate(LocalDate.now().atTime(LocalTime.now()))
+                .build()
+        );
+        parameterService.saveParameter(Parameter.builder()
+                .parameterName("TEAMUP_CORE_GET_USER_BY_ID_ENABLED")
+                .parameterType(BOOLEAN)
+                .parameterValue("false")
+                .systemName(AppModuleNameDto.TEAMUP_CORE)
+                .creationDate(LocalDate.now())
+                .updateDate(LocalDate.now().atTime(LocalTime.now()))
+                .build()
+        );
+        parameterService.saveParameter(Parameter.builder()
+                .parameterName("TEAMUP_CORE_COUNT_RETURN_CITY")
+                .parameterType(INTEGER)
+                .parameterValue("10")
+                .systemName(AppModuleNameDto.TEAMUP_CORE)
+                .creationDate(LocalDate.now())
+                .updateDate(LocalDate.now().atTime(LocalTime.now()))
+                .build()
         );
 
     }

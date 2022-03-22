@@ -118,6 +118,7 @@ public class ParameterServiceImpl implements ParameterService {
 
         Parameter save = parameterRepository.save(parameter);
         log.debug("Изменили параметр в БД {}", save);
+        kafkaSupService.send(parameter);
 
         return save;
     }

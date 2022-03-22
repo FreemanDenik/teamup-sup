@@ -49,7 +49,6 @@ public class KafkaProducerSupConfig {
      * @return возвращает объект org.springframework.kafka.core.KafkaTemplate
      */
     @Bean
-    @Qualifier("kafkaTemplate")
     public KafkaTemplate<String, SupParameterDto<?>> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
