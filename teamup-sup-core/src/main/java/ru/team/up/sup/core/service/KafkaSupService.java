@@ -27,6 +27,13 @@ public interface KafkaSupService {
     void delete(Parameter parameter);
 
     /**
+     * Отправка нескольких параметров в kafka
+     *
+     * @param list лист с объектами для кофигурации работы модулей приложения
+     */
+    void sendList(List<Parameter> list);
+
+    /**
      * Получение списка параметров ВСЕХ систем
      *
      * @return List<SupParameterDto> - Коллекция с параметрами для кофигурации работы модулей приложения

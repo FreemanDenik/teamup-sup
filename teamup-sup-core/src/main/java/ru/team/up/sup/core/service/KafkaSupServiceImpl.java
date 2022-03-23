@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.team.up.dto.SupParameterDto;
+import ru.team.up.sup.core.dto.ListSupParameterDto;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.repositories.SupRepository;
 
@@ -28,12 +29,22 @@ public class KafkaSupServiceImpl implements KafkaSupService {
     /**
      * Шаблон kafka для отправки сообщений
      */
-    private KafkaTemplate<String, SupParameterDto<?>> kafkaTemplate;
+    private KafkaTemplate<String, ListSupParameterDto> kafkaTemplate;
     private SupRepository supRepository;
 
-    public KafkaSupServiceImpl(KafkaTemplate<String, SupParameterDto<?>> kafkaTemplate, SupRepository supRepository) {
+    public KafkaSupServiceImpl(KafkaTemplate<String, ListSupParameterDto> kafkaTemplate, SupRepository supRepository) {
         this.kafkaTemplate = kafkaTemplate;
         this.supRepository = supRepository;
+    }
+
+    public SupParameterDto<?> convertToDto(Parameter parameter) {
+        return SupParameterDto.builder()
+                .parameterName(parameter.getParameterName())
+                .systemName(parameter.getSystemName())
+                .parameterValue(parameter.getParameterValue())
+                .updateTime(parameter.getUpdateDate())
+                .isDeleted(false)
+                .build();
     }
 
     /**
@@ -47,14 +58,25 @@ public class KafkaSupServiceImpl implements KafkaSupService {
             log.debug("The parameter value is null.");
         } else {
             log.debug("Start sending message: {}", parameter);
-            kafkaTemplate.send(TOPIC, SupParameterDto.builder()
-                    .parameterName(parameter.getParameterName())
-                    .systemName(parameter.getSystemName())
-                    .parameterValue(parameter.getParameterValue())
-                    .updateTime(parameter.getUpdateDate())
-                    .isDeleted(false)
-                    .build());
+            ListSupParameterDto listToSend = new ListSupParameterDto();
+            listToSend.addParameter(convertToDto(parameter));
+            kafkaTemplate.send(TOPIC, listToSend);
             log.debug("Finished sending message: {}", parameter);
+        }
+    }
+
+    @Override
+    public void sendList(List<Parameter> list) {
+        if (list.isEmpty()) {
+            log.debug("The parameter list is empty.");
+        } else {
+            log.debug("Start sending list");
+            ListSupParameterDto listToSend = new ListSupParameterDto();
+            for (Parameter parameter : list) {
+                listToSend.addParameter(convertToDto(parameter));
+            }
+            kafkaTemplate.send(TOPIC, listToSend);
+            log.debug("Finished sending list");
         }
     }
 
@@ -70,13 +92,12 @@ public class KafkaSupServiceImpl implements KafkaSupService {
             log.debug("The parameter value is null.");
         } else {
             log.debug("Start sending delete message: {}", parameter);
-            kafkaTemplate.send(TOPIC, SupParameterDto.builder()
-                    .parameterName(parameter.getParameterName())
-                    .systemName(parameter.getSystemName())
-                    .parameterValue(parameter.getParameterValue())
-                    .updateTime(LocalDateTime.now())
-                    .isDeleted(true)
-                    .build());
+            SupParameterDto<?> dto = convertToDto(parameter);
+            dto.setUpdateTime(LocalDateTime.now());
+            dto.setDeleted(true);
+            ListSupParameterDto listToSend = new ListSupParameterDto();
+            listToSend.addParameter(dto);
+            kafkaTemplate.send(TOPIC, listToSend);
             log.debug("Finished sending message: {}", parameter);
         }
     }
