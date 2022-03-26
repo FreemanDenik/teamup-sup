@@ -33,10 +33,12 @@ public interface KafkaSupService {
      */
     void sendList(List<Parameter> list);
 
+    // Откуда сервис должен получать параметры систем если он является единственным управляющим?
+    // Если необходимо реализовать механизм обратной связи, то нужно запросить текущие параметры через кафку.
     /**
      * Получение списка параметров ВСЕХ систем
      *
      * @return List<SupParameterDto> - Коллекция с параметрами для кофигурации работы модулей приложения
      */
-    List<SupParameterDto> getListParameters();
+    List<SupParameterDto<?>> getListParameters();
 }

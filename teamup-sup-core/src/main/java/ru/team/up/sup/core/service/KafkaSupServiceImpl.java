@@ -1,9 +1,10 @@
 package ru.team.up.sup.core.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.team.up.dto.SupParameterDto;
 import ru.team.up.sup.core.dto.ListSupParameterDto;
 import ru.team.up.sup.core.entity.Parameter;
@@ -18,7 +19,7 @@ import java.util.List;
  */
 
 @Slf4j
-@Service
+@Component
 public class KafkaSupServiceImpl implements KafkaSupService {
     /**
      * Имя топика kafka
@@ -29,11 +30,13 @@ public class KafkaSupServiceImpl implements KafkaSupService {
     /**
      * Шаблон kafka для отправки сообщений
      */
-    private KafkaTemplate<String, ListSupParameterDto> kafkaTemplate;
-    private SupRepository supRepository;
+    private final KafkaTemplate<String, ListSupParameterDto> kafkaTemplateListDto;
+    private final SupRepository supRepository;
 
-    public KafkaSupServiceImpl(KafkaTemplate<String, ListSupParameterDto> kafkaTemplate, SupRepository supRepository) {
-        this.kafkaTemplate = kafkaTemplate;
+    @Autowired
+    public KafkaSupServiceImpl(KafkaTemplate<String, ListSupParameterDto> kafkaTemplateListDto,
+                               SupRepository supRepository) {
+        this.kafkaTemplateListDto = kafkaTemplateListDto;
         this.supRepository = supRepository;
     }
 
@@ -60,7 +63,7 @@ public class KafkaSupServiceImpl implements KafkaSupService {
             log.debug("Start sending message: {}", parameter);
             ListSupParameterDto listToSend = new ListSupParameterDto();
             listToSend.addParameter(convertToDto(parameter));
-            kafkaTemplate.send(TOPIC, listToSend);
+            kafkaTemplateListDto.send(TOPIC, listToSend);
             log.debug("Finished sending message: {}", parameter);
         }
     }
@@ -72,10 +75,8 @@ public class KafkaSupServiceImpl implements KafkaSupService {
         } else {
             log.debug("Start sending list");
             ListSupParameterDto listToSend = new ListSupParameterDto();
-            for (Parameter parameter : list) {
-                listToSend.addParameter(convertToDto(parameter));
-            }
-            kafkaTemplate.send(TOPIC, listToSend);
+            list.stream().forEach(param -> listToSend.addParameter(convertToDto(param)));
+            kafkaTemplateListDto.send(TOPIC, listToSend);
             log.debug("Finished sending list");
         }
     }
@@ -91,19 +92,19 @@ public class KafkaSupServiceImpl implements KafkaSupService {
         if (parameter == null) {
             log.debug("The parameter value is null.");
         } else {
-            log.debug("Start sending delete message: {}", parameter);
+            log.debug("Start sending delete message for: {}", parameter);
             SupParameterDto<?> dto = convertToDto(parameter);
             dto.setUpdateTime(LocalDateTime.now());
             dto.setDeleted(true);
             ListSupParameterDto listToSend = new ListSupParameterDto();
             listToSend.addParameter(dto);
-            kafkaTemplate.send(TOPIC, listToSend);
-            log.debug("Finished sending message: {}", parameter);
+            kafkaTemplateListDto.send(TOPIC, listToSend);
+            log.debug("Finished sending delete message for: {}", parameter);
         }
     }
 
     @Override
-    public List<SupParameterDto> getListParameters() {
+    public List<SupParameterDto<?>> getListParameters() {
         return supRepository.findAll();
     }
 }

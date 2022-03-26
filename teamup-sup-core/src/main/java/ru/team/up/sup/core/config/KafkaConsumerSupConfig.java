@@ -57,11 +57,10 @@ public class KafkaConsumerSupConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, AppModuleNameDto> kafkaModuleTemplate() {
+    public ConcurrentKafkaListenerContainerFactory<String, AppModuleNameDto> kafkaModuleContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, AppModuleNameDto> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(moduleConsumerFactory());
         return factory;
     }
-
 }

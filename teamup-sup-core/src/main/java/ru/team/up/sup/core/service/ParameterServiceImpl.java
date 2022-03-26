@@ -10,6 +10,7 @@ import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.exception.NoContentException;
 import ru.team.up.sup.core.repositories.ParameterRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,7 @@ import java.util.Optional;
 public class ParameterServiceImpl implements ParameterService {
 
     private ParameterRepository parameterRepository;
-    private KafkaSupServiceImpl kafkaSupService;
+    private KafkaSupService kafkaSupService;
 
     @Override
     @Transactional(readOnly = true)
@@ -42,7 +43,7 @@ public class ParameterServiceImpl implements ParameterService {
         if (parameters.isEmpty()) {
             throw new NoContentException();
         }
-        log.debug("Получили список всех параметров по systemName из БД {}", systemName);
+        log.debug("Получили список всех параметров по systemName {} из БД", systemName);
         return parameters;
     }
 
@@ -52,7 +53,7 @@ public class ParameterServiceImpl implements ParameterService {
         log.debug("Старт метода Parameter getParameterById(Long id) с параметром {}", id);
         Parameter parameter = Optional.of(parameterRepository.findById(id)
                 .orElseThrow(() -> new NoContentException())).get();
-        log.debug("Получили параметр из БД {}", parameter.getId());
+        log.debug("Получили параметр {} из БД", parameter.getId());
         return parameter;
     }
 
@@ -72,9 +73,8 @@ public class ParameterServiceImpl implements ParameterService {
     @Transactional
     public Parameter saveParameter(Parameter parameter) {
         log.debug("Старт метода Parameter saveParameter(Parameter parameter) с параметром {}", parameter);
-        // надо проверить нужно ли здесь менять время или оно уже устанавливается само
-//        parameter.setCreationDate(LocalDate.now());
-//        parameter.setUpdateDate(LocalDateTime.now());
+        parameter.setCreationDate(LocalDate.now());
+        parameter.setUpdateDate(LocalDateTime.now());
         Parameter saved = parameterRepository.save(parameter);
         kafkaSupService.send(parameter);
         log.debug("Сохранили параметр в БД {}", saved);

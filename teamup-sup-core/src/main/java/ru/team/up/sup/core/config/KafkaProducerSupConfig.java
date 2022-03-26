@@ -1,6 +1,5 @@
 package ru.team.up.sup.core.config;
 
-
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +37,10 @@ public class KafkaProducerSupConfig {
         return configProps;
     }
 
+    /**
+     * Фабрика производителей с листом ДТО параметров
+     */
+    @Bean
     public ProducerFactory<String, ListSupParameterDto> producerFactory() {
         return new DefaultKafkaProducerFactory<>(configProps());
     }
@@ -46,7 +49,7 @@ public class KafkaProducerSupConfig {
      * @return возвращает объект org.springframework.kafka.core.KafkaTemplate
      */
     @Bean
-    public KafkaTemplate<String, ListSupParameterDto> kafkaTemplate() {
+    public KafkaTemplate<String, ListSupParameterDto> kafkaTemplateListDto() {
         return new KafkaTemplate<>(producerFactory());
     }
 }
