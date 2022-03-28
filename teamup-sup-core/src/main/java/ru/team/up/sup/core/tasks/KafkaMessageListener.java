@@ -15,27 +15,27 @@ import ru.team.up.sup.core.service.ParameterService;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class KafkaMessageListener {
 
-    private KafkaSupService supService;
+    private KafkaSupService kafkaSupService;
     private ParameterService parameterService;
 
     @KafkaListener(topics = "${kafka.topic.name}", containerFactory = "kafkaParamContainerFactory")
-    public void listener(ListSupParameterDto listParameterDto) {
+    public void kafkaSupParametersListListener(ListSupParameterDto listParameterDto) {
         if (listParameterDto.getList().isEmpty()) {
-            log.debug("KafkaListener: The parameter list is empty.");
+            log.debug("KafkaSupParametersListListener: Входящий лист параметров пуст.");
         } else {
-            log.debug("KafkaListener, parameter list:");
+            log.debug("KafkaSupParametersListListener, parameter list:");
             listParameterDto.getList().stream().forEach(
                     p -> log.debug(p.getParameterName() + " " + p.getParameterValue()));
         }
     }
 
     @KafkaListener(topics = "${kafka.init.topic.name}", containerFactory = "kafkaModuleContainerFactory")
-    public void initListener(AppModuleNameDto module) {
+    public void kafkaInitializationListener(AppModuleNameDto module) {
         if (module == null) {
-            log.debug("KafkaListener: The module value is null.");
+            log.debug("KafkaInitializationListener: Имя инициализированного модуля = null.");
         } else {
-            log.debug("KafkaListener, module: {}", module);
-            supService.sendList(parameterService.getParametersBySystemName(module));
+            log.debug("KafkaInitializationListener: модуль {} инициализирован", module);
+            kafkaSupService.sendList(parameterService.getParametersBySystemName(module));
         }
     }
 }
