@@ -10,7 +10,7 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import ru.team.up.dto.AppModuleNameDto;
-import ru.team.up.dto.SupParameterDto;
+import ru.team.up.dto.ListSupParameterDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,20 +40,22 @@ public class KafkaConsumerSupConfig {
         return configProps;
     }
 
-    public ConsumerFactory<String, SupParameterDto<?>> dtoConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(jsonConfigProps());
+    @Bean
+    public ConsumerFactory<String, ListSupParameterDto> parameterConsumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(jsonConfigProps(), new StringDeserializer(), new JsonDeserializer<>(ListSupParameterDto.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, SupParameterDto<?>> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, SupParameterDto<?>> factory =
+    public ConcurrentKafkaListenerContainerFactory<String, ListSupParameterDto> kafkaParamContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, ListSupParameterDto> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(dtoConsumerFactory());
+        factory.setConsumerFactory(parameterConsumerFactory());
         return factory;
     }
 
+    @Bean
     public ConsumerFactory<String, AppModuleNameDto> moduleConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(jsonConfigProps());
+        return new DefaultKafkaConsumerFactory<>(jsonConfigProps(), new StringDeserializer(), new JsonDeserializer<>(AppModuleNameDto.class));
     }
 
     @Bean

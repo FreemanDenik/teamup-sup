@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import ru.team.up.dto.AppModuleNameDto;
-import ru.team.up.sup.core.dto.ListSupParameterDto;
+import ru.team.up.dto.ListSupParameterDto;
 import ru.team.up.sup.core.service.KafkaSupService;
 import ru.team.up.sup.core.service.ParameterService;
 
@@ -18,13 +18,14 @@ public class KafkaMessageListener {
     private KafkaSupService supService;
     private ParameterService parameterService;
 
-    @KafkaListener(topics = "${kafka.topic.name}", containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(topics = "${kafka.topic.name}", containerFactory = "kafkaParamContainerFactory")
     public void listener(ListSupParameterDto listParameterDto) {
         if (listParameterDto.getList().isEmpty()) {
             log.debug("KafkaListener: The parameter list is empty.");
         } else {
-            log.debug("KafkaListener, parameter list: ");
-            listParameterDto.getList().stream().forEach(p -> log.debug(p.getParameterName() + p.getParameterValue()));
+            log.debug("KafkaListener, parameter list:");
+            listParameterDto.getList().stream().forEach(
+                    p -> log.debug(p.getParameterName() + " " + p.getParameterValue()));
         }
     }
 

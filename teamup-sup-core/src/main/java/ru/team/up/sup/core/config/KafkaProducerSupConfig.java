@@ -9,7 +9,7 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import ru.team.up.sup.core.dto.ListSupParameterDto;
+import ru.team.up.dto.ListSupParameterDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,30 +26,24 @@ public class KafkaProducerSupConfig {
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;
 
-    /**
-     * Конфигурация фабрики производителей
-     */
-    public Map<String, Object> configProps() {
+    @Bean
+    public ProducerFactory<String, ListSupParameterDto> listSupParameterDtoProducerFactory() {
         Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return configProps;
+        configProps.put(
+                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
+                bootstrapAddress);
+        configProps.put(
+                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+                StringSerializer.class);
+        configProps.put(
+                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                JsonSerializer.class);
+        return new DefaultKafkaProducerFactory<>(configProps);
     }
 
-    /**
-     * Фабрика производителей с листом ДТО параметров
-     */
     @Bean
-    public ProducerFactory<String, ListSupParameterDto> producerFactory() {
-        return new DefaultKafkaProducerFactory<>(configProps());
+    public KafkaTemplate<String, ListSupParameterDto> listSupParameterDtoKafkaTemplate() {
+        return new KafkaTemplate<>(listSupParameterDtoProducerFactory());
     }
 
-    /**
-     * @return возвращает объект org.springframework.kafka.core.KafkaTemplate
-     */
-    @Bean
-    public KafkaTemplate<String, ListSupParameterDto> kafkaTemplateListDto() {
-        return new KafkaTemplate<>(producerFactory());
-    }
 }
