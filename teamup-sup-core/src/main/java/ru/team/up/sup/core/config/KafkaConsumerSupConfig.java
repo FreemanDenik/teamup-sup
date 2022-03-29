@@ -9,7 +9,8 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import ru.team.up.dto.SupParameterDto;
+import ru.team.up.dto.AppModuleNameDto;
+import ru.team.up.dto.ListSupParameterDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class KafkaConsumerSupConfig {
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;
 
-    public ConsumerFactory<? super String, ? super SupParameterDto<?>> consumerFactory() {
+    public Map<String, Object> jsonConfigProps() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
@@ -36,14 +37,32 @@ public class KafkaConsumerSupConfig {
         configProps.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
         configProps.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         configProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
-        return new DefaultKafkaConsumerFactory<>(configProps);
+        return configProps;
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, SupParameterDto<?>> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, SupParameterDto<?>> factory =
+    public ConsumerFactory<String, ListSupParameterDto> parameterConsumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(jsonConfigProps(), new StringDeserializer(), new JsonDeserializer<>(ListSupParameterDto.class));
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, ListSupParameterDto> kafkaParamContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, ListSupParameterDto> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
+        factory.setConsumerFactory(parameterConsumerFactory());
+        return factory;
+    }
+
+    @Bean
+    public ConsumerFactory<String, AppModuleNameDto> moduleConsumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(jsonConfigProps(), new StringDeserializer(), new JsonDeserializer<>(AppModuleNameDto.class));
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, AppModuleNameDto> kafkaModuleContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, AppModuleNameDto> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(moduleConsumerFactory());
         return factory;
     }
 }

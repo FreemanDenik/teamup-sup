@@ -55,7 +55,7 @@ public class KafkaController {
 
     @Operation(summary = "Получение списка всех параметров")
     @PostMapping("/get")
-    public ResponseEntity<List<SupParameterDto>> get() {
+    public ResponseEntity<List<SupParameterDto<?>>> get() {
         log.debug("Старт метода ResponseEntity<List<SupParameterDto>> get()");
         return new ResponseEntity<>(kafkaProducerSupService.getListParameters(), HttpStatus.OK);
     }

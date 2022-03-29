@@ -25,7 +25,6 @@ public class UsersDefaultCreator {
     @Bean("UsersDefaultCreator")
     public void usersDefaultCreator() {
         userRepository.save(User.builder()
-                .id(1L)
                 .name("User")
                 .lastName("DefaultUser")
                 .email("user@gmail.com")
@@ -34,7 +33,6 @@ public class UsersDefaultCreator {
                 .build());
 
         userRepository.save(User.builder()
-                 .id(2L)
                 .name("Admin")
                 .lastName("DefaultAdmin")
                 .email("admin@gmail.com")

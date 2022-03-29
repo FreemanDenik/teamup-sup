@@ -7,7 +7,6 @@ import ru.team.up.sup.core.entity.Parameter;
 import java.util.List;
 
 /**
- * @author Stepan Glushchenko
  * Интерфейс сервиса для отправки парамтеров в kafka
  */
 
@@ -27,9 +26,18 @@ public interface KafkaSupService {
     void delete(Parameter parameter);
 
     /**
+     * Отправка нескольких параметров в kafka
+     *
+     * @param list лист с объектами для кофигурации работы модулей приложения
+     */
+    void sendList(List<Parameter> list);
+
+    // Откуда сервис должен получать параметры систем если он является единственным управляющим?
+    // Если необходимо реализовать механизм обратной связи, то нужно запросить текущие параметры модулей через кафку.
+    /**
      * Получение списка параметров ВСЕХ систем
      *
      * @return List<SupParameterDto> - Коллекция с параметрами для кофигурации работы модулей приложения
      */
-    List<SupParameterDto> getListParameters();
+    List<SupParameterDto<?>> getListParameters();
 }
