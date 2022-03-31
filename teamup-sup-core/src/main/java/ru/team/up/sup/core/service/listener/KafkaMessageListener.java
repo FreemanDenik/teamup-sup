@@ -1,4 +1,4 @@
-package ru.team.up.sup.core.tasks;
+package ru.team.up.sup.core.service.listener;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,17 +17,6 @@ public class KafkaMessageListener {
 
     private KafkaSupService kafkaSupService;
     private ParameterService parameterService;
-
-    @KafkaListener(topics = "${kafka.topic.name}", containerFactory = "kafkaParamContainerFactory")
-    public void kafkaSupParametersListListener(ListSupParameterDto listParameterDto) {
-        if (listParameterDto.getList().isEmpty()) {
-            log.debug("KafkaSupParametersListListener: Входящий лист параметров пуст.");
-        } else {
-            log.debug("KafkaSupParametersListListener, parameter list:");
-            listParameterDto.getList().stream().forEach(
-                    p -> log.debug(p.getParameterName() + " " + p.getParameterValue()));
-        }
-    }
 
     @KafkaListener(topics = "${kafka.init.topic.name}", containerFactory = "kafkaModuleContainerFactory")
     public void kafkaInitializationListener(AppModuleNameDto module) {

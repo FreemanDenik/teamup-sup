@@ -53,12 +53,12 @@ public class KafkaController {
         return new ResponseEntity<>(parameter, HttpStatus.OK);
     }
 
-    @Operation(summary = "Получение списка всех параметров")
-    @PostMapping("/get")
-    public ResponseEntity<List<SupParameterDto<?>>> get() {
-        log.debug("Старт метода ResponseEntity<List<SupParameterDto>> get()");
-        return new ResponseEntity<>(kafkaProducerSupService.getListParameters(), HttpStatus.OK);
-    }
+//    @Operation(summary = "Получение списка всех параметров")
+//    @PostMapping("/get")
+//    public ResponseEntity<List<SupParameterDto<?>>> get() {
+//        log.debug("Старт метода ResponseEntity<List<SupParameterDto>> get()");
+//        return new ResponseEntity<>(kafkaProducerSupService.getListParameters(), HttpStatus.OK);
+//    }
 
     @Operation(summary = "(Для тестов) Отправка трех параметров")
     @PostMapping("/sendTest")

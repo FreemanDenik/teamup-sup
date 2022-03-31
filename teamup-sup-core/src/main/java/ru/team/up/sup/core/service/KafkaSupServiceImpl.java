@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import ru.team.up.dto.ListSupParameterDto;
 import ru.team.up.dto.SupParameterDto;
 import ru.team.up.sup.core.entity.Parameter;
-import ru.team.up.sup.core.repositories.SupRepository;
 import ru.team.up.sup.core.utils.ParameterToDto;
 
 import java.time.LocalDateTime;
@@ -31,13 +30,11 @@ public class KafkaSupServiceImpl implements KafkaSupService {
      * Шаблон kafka для отправки сообщений
      */
     private final KafkaTemplate<String, ListSupParameterDto> listSupParameterDtoKafkaTemplate;
-    private final SupRepository supRepository;
+
 
     @Autowired
-    public KafkaSupServiceImpl(KafkaTemplate<String, ListSupParameterDto> listSupParameterDtoKafkaTemplate,
-                               SupRepository supRepository) {
+    public KafkaSupServiceImpl(KafkaTemplate<String, ListSupParameterDto> listSupParameterDtoKafkaTemplate) {
         this.listSupParameterDtoKafkaTemplate = listSupParameterDtoKafkaTemplate;
-        this.supRepository = supRepository;
     }
 
     /**
@@ -93,10 +90,5 @@ public class KafkaSupServiceImpl implements KafkaSupService {
             listSupParameterDtoKafkaTemplate.send(TOPIC, listToSend);
             log.debug("Завершение отправки удаленного параметра: {}", parameter);
         }
-    }
-
-    @Override
-    public List<SupParameterDto<?>> getListParameters() {
-        return supRepository.findAll();
     }
 }

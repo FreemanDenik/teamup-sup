@@ -1,7 +1,6 @@
 package ru.team.up.sup.core.service;
 
 
-import ru.team.up.dto.SupParameterDto;
 import ru.team.up.sup.core.entity.Parameter;
 
 import java.util.List;
@@ -31,13 +30,4 @@ public interface KafkaSupService {
      * @param list лист с объектами для кофигурации работы модулей приложения
      */
     void sendList(List<Parameter> list);
-
-    // Откуда сервис должен получать параметры систем если он является единственным управляющим?
-    // Если необходимо реализовать механизм обратной связи, то нужно запросить текущие параметры модулей через кафку.
-    /**
-     * Получение списка параметров ВСЕХ систем
-     *
-     * @return List<SupParameterDto> - Коллекция с параметрами для кофигурации работы модулей приложения
-     */
-    List<SupParameterDto<?>> getListParameters();
 }

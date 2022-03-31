@@ -14,31 +14,26 @@ import ru.team.up.dto.ListSupParameterDto;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Stepan Glushchenko
- * Конфигурация producer kafka
- */
 @Configuration
 public class KafkaProducerSupConfig {
-    /**
-     * Адрес bootstrap сервера kafka
-     */
+
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;
 
-    @Bean
-    public ProducerFactory<String, ListSupParameterDto> listSupParameterDtoProducerFactory() {
+    public Map<String, Object> jsonConfigProps() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(
-                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                bootstrapAddress);
+                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(
-                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-                StringSerializer.class);
+                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(
-                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                JsonSerializer.class);
-        return new DefaultKafkaProducerFactory<>(configProps);
+                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        return configProps;
+    }
+
+    @Bean
+    public ProducerFactory<String, ListSupParameterDto> listSupParameterDtoProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(jsonConfigProps());
     }
 
     @Bean

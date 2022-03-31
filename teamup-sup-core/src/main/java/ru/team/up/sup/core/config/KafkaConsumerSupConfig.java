@@ -10,22 +10,15 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import ru.team.up.dto.AppModuleNameDto;
-import ru.team.up.dto.ListSupParameterDto;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
 public class KafkaConsumerSupConfig {
-    /**
-     * Значение groupId, которе определяет группу консьюмеров, в рамках которой доставляется один экземпляр сообщения.
-     * Например, при трех консьюмеров в одной группе, слушающих один Topic сообщение достанется, только, одному
-     */
+
     @Value(value = "${kafka.group.id}")
     private String groupId;
-    /**
-     * Адрес bootstrap сервера kafka
-     */
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;
 
@@ -41,21 +34,10 @@ public class KafkaConsumerSupConfig {
     }
 
     @Bean
-    public ConsumerFactory<String, ListSupParameterDto> parameterConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(jsonConfigProps(), new StringDeserializer(), new JsonDeserializer<>(ListSupParameterDto.class));
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, ListSupParameterDto> kafkaParamContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, ListSupParameterDto> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(parameterConsumerFactory());
-        return factory;
-    }
-
-    @Bean
     public ConsumerFactory<String, AppModuleNameDto> moduleConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(jsonConfigProps(), new StringDeserializer(), new JsonDeserializer<>(AppModuleNameDto.class));
+        return new DefaultKafkaConsumerFactory<>(jsonConfigProps(),
+                new StringDeserializer(),
+                new JsonDeserializer<>(AppModuleNameDto.class));
     }
 
     @Bean
