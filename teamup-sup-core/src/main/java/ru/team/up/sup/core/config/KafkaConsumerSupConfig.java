@@ -1,7 +1,6 @@
 package ru.team.up.sup.core.config;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +24,7 @@ public class KafkaConsumerSupConfig {
     public Map<String, Object> jsonConfigProps() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         configProps.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
         configProps.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
@@ -34,16 +33,15 @@ public class KafkaConsumerSupConfig {
     }
 
     @Bean
-    public ConsumerFactory<String, AppModuleNameDto> moduleConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(jsonConfigProps(),
-                new StringDeserializer(),
-                new JsonDeserializer<>(AppModuleNameDto.class));
+    public ConsumerFactory<AppModuleNameDto, AppModuleNameDto> moduleConsumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(jsonConfigProps());
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, AppModuleNameDto> kafkaModuleContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, AppModuleNameDto> factory =
+    public ConcurrentKafkaListenerContainerFactory<AppModuleNameDto, AppModuleNameDto> kafkaModuleContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<AppModuleNameDto, AppModuleNameDto> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setRecordFilterStrategy(message -> message.key() != AppModuleNameDto.TEAMUP_SUP);
         factory.setConsumerFactory(moduleConsumerFactory());
         return factory;
     }

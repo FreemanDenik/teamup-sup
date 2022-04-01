@@ -6,28 +6,28 @@ import ru.team.up.sup.core.entity.Parameter;
 import java.util.List;
 
 /**
- * Интерфейс сервиса для отправки парамтеров в kafka
+ * Интерфейс сервиса для отправки параметров в kafka
  */
 
 public interface KafkaSupService {
     /**
-     * Отправка сообщения в kafka
+     * Отправка параметра в kafka
      *
-     * @param parameter объект для кофигурации работы модулей приложения
+     * @param parameter объект для конфигурации работы модулей приложения
      */
     void send(Parameter parameter);
 
     /**
-     * Отправляет в kafka сообщение состоящее из ParameterDTO с  полем isDeleted - true
-     *
-     * @param parameter объект для кофигурации работы модулей приложения
-     */
-    void delete(Parameter parameter);
-
-    /**
      * Отправка нескольких параметров в kafka
      *
-     * @param list лист с объектами для кофигурации работы модулей приложения
+     * @param list лист с объектами для конфигурации работы модулей приложения
      */
-    void sendList(List<Parameter> list);
+    void send(List<Parameter> list);
+
+    /**
+     * Отправляет в kafka параметр с  полем isDeleted = true
+     *
+     * @param parameter объект для конфигурации работы модулей приложения
+     */
+    void delete(Parameter parameter);
 }
