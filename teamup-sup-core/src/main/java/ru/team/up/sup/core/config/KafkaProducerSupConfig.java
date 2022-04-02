@@ -1,7 +1,6 @@
 package ru.team.up.sup.core.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,40 +8,36 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import ru.team.up.dto.AppModuleNameDto;
 import ru.team.up.dto.ListSupParameterDto;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Stepan Glushchenko
- * Конфигурация producer kafka
- */
 @Configuration
 public class KafkaProducerSupConfig {
-    /**
-     * Адрес bootstrap сервера kafka
-     */
+
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;
 
-    @Bean
-    public ProducerFactory<String, ListSupParameterDto> listSupParameterDtoProducerFactory() {
+    public Map<String, Object> jsonConfigProps() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(
-                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                bootstrapAddress);
+                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(
-                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-                StringSerializer.class);
+                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         configProps.put(
-                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                JsonSerializer.class);
-        return new DefaultKafkaProducerFactory<>(configProps);
+                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        return configProps;
     }
 
     @Bean
-    public KafkaTemplate<String, ListSupParameterDto> listSupParameterDtoKafkaTemplate() {
+    public ProducerFactory<AppModuleNameDto, ListSupParameterDto> listSupParameterDtoProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(jsonConfigProps());
+    }
+
+    @Bean
+    public KafkaTemplate<AppModuleNameDto, ListSupParameterDto> listSupParameterDtoKafkaTemplate() {
         return new KafkaTemplate<>(listSupParameterDtoProducerFactory());
     }
 

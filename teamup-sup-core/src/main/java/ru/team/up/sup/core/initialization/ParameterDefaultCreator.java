@@ -1,13 +1,12 @@
 package ru.team.up.sup.core.initialization;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import ru.team.up.dto.AppModuleNameDto;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.service.ParameterService;
 
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,12 +16,12 @@ import static ru.team.up.sup.core.entity.ParameterType.*;
 
 @Component
 @Transactional
-@AllArgsConstructor(onConstructor = @__(@Autowired))
+@AllArgsConstructor
 public class ParameterDefaultCreator {
 
     private ParameterService parameterService;
 
-    @Bean("ParameterDefaultCreator")
+    @PostConstruct
     public void parameterDefaultCreator() {
         parameterService.saveParameter(Parameter.builder()
                 .parameterName("testName")

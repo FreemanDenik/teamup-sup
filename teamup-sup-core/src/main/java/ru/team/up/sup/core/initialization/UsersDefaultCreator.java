@@ -1,5 +1,6 @@
 package ru.team.up.sup.core.initialization;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -8,21 +9,17 @@ import ru.team.up.sup.core.entity.Role;
 import ru.team.up.sup.core.entity.User;
 import ru.team.up.sup.core.repositories.UserRepository;
 
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 
 @Component
 @Transactional
+@AllArgsConstructor
 public class UsersDefaultCreator {
 
     private final UserRepository userRepository;
 
-    @Autowired
-    public UsersDefaultCreator(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-
-    @Bean("UsersDefaultCreator")
+    @PostConstruct
     public void usersDefaultCreator() {
         userRepository.save(User.builder()
                 .name("User")
