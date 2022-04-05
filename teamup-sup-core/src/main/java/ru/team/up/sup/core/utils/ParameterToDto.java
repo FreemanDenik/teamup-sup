@@ -8,6 +8,7 @@ import ru.team.up.sup.core.entity.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class ParameterToDto {
@@ -19,10 +20,18 @@ public class ParameterToDto {
                 .isDeleted(false)
                 .build();
         switch (parameter.getParameterType()) {
-            case DOUBLE -> dto.setParameterValue(Double.parseDouble(parameter.getParameterValue()));
-            case BOOLEAN -> dto.setParameterValue(Boolean.parseBoolean(parameter.getParameterValue()));
-            case INTEGER -> dto.setParameterValue(Integer.parseInt(parameter.getParameterValue()));
-            case STRING -> dto.setParameterValue(parameter.getParameterValue());
+            case DOUBLE:
+                dto.setParameterValue(Double.parseDouble(parameter.getParameterValue()));
+                break;
+            case BOOLEAN:
+                dto.setParameterValue(Boolean.parseBoolean(parameter.getParameterValue()));
+                break;
+            case INTEGER:
+                dto.setParameterValue(Integer.parseInt(parameter.getParameterValue()));
+                break;
+            case STRING:
+                dto.setParameterValue(parameter.getParameterValue());
+                break;
         }
         return dto;
     }
@@ -37,7 +46,7 @@ public class ParameterToDto {
             log.debug("Проверка наличия параметров из модуля {}", module);
             List<Parameter> filteredList = parameterList.stream().filter(
                             p -> p.getSystemName() == module)
-                    .toList();
+                    .collect(Collectors.toList());
             if (filteredList.isEmpty()) {
                 log.debug("Параметры из модуля {} не найдены", module);
                 continue;
