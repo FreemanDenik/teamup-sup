@@ -3,6 +3,7 @@ package ru.team.up.sup.core.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import ru.team.up.dto.AppModuleNameDto;
+import ru.team.up.dto.SupParameterTypeDto;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -32,7 +33,7 @@ public class Parameter {
 
     @Enumerated(EnumType.STRING)
     @Column
-    private ParameterType parameterType;
+    private SupParameterTypeDto parameterType;
 
     @Column(nullable = false)
     private AppModuleNameDto systemName;

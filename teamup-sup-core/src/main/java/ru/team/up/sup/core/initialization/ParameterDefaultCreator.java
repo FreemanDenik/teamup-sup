@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import static ru.team.up.sup.core.entity.ParameterType.*;
+import static ru.team.up.dto.SupParameterTypeDto.*;
 
 @Component
 @Transactional

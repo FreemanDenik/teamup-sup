@@ -1,6 +1,7 @@
 package ru.team.up.sup.core.service;
 
 import ru.team.up.dto.AppModuleNameDto;
+import ru.team.up.dto.SupParameterDto;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.exception.NoContentException;
 
@@ -50,4 +51,7 @@ public interface ParameterService {
     void deleteParameter(Long id);
 
     Parameter editParameter(Parameter parameter);
+
+    List<SupParameterDto<?>> readParametersFromFile();
+    void compareAndUpdateWithFile();
 }

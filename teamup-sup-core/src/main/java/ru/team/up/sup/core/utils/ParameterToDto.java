@@ -15,11 +15,11 @@ public class ParameterToDto {
     public static SupParameterDto<?> convert(Parameter parameter) {
         SupParameterDto dto = SupParameterDto.builder()
                 .parameterName(parameter.getParameterName())
+                .parameterType(parameter.getParameterType())
                 .systemName(parameter.getSystemName())
                 .updateTime(parameter.getUpdateDate())
-                .isDeleted(false)
                 .build();
-        switch (parameter.getParameterType()) {
+        switch (dto.getParameterType()) {
             case DOUBLE:
                 dto.setParameterValue(Double.parseDouble(parameter.getParameterValue()));
                 break;

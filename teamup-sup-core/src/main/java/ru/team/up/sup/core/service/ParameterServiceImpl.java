@@ -1,17 +1,22 @@
 package ru.team.up.sup.core.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.team.up.dto.AppModuleNameDto;
+import ru.team.up.dto.SupParameterDto;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.exception.NoContentException;
 import ru.team.up.sup.core.repositories.ParameterRepository;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +28,11 @@ public class ParameterServiceImpl implements ParameterService {
 
     private ParameterRepository parameterRepository;
     private KafkaSupService kafkaSupService;
+
+//    @PostConstruct
+//    private void init(){
+//        compareAndUpdateWithFile();
+//    }
 
     @Override
     @Transactional(readOnly = true)
@@ -103,4 +113,37 @@ public class ParameterServiceImpl implements ParameterService {
         kafkaSupService.send(editedParam);
         return editedParam;
     }
+
+    @Override
+    public List<SupParameterDto<?>> readParametersFromFile() {
+        ObjectMapper mapper = new ObjectMapper();
+        List<SupParameterDto<?>> list = List.of();
+        try {
+            list = Arrays.asList(mapper.readValue(new File("./Parameters.json"),
+                    SupParameterDto[].class));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
+    public void compareAndUpdateWithFile() {
+        List<SupParameterDto<?>> list = readParametersFromFile();
+        for (SupParameterDto fileParam : list) {
+            Parameter bdParam = parameterRepository.getParameterByParameterName(fileParam.getParameterName());
+
+            if (bdParam == null) {
+                parameterRepository.save(Parameter.builder()
+                        .parameterName(fileParam.getParameterName())
+                        .parameterType(fileParam.getParameterType())
+                        .systemName(fileParam.getSystemName())
+                        .parameterValue(fileParam.getParameterValue().toString())
+                        .creationDate(LocalDate.now())
+                        .updateDate(LocalDateTime.now())
+                        .build());
+            }
+        }
+    }
+
 }

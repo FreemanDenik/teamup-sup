@@ -1,13 +1,17 @@
 package ru.team.up.sup.input.controller.publicController;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import ru.team.up.dto.AppModuleNameDto;
+import ru.team.up.dto.SupParameterTypeDto;
 import ru.team.up.sup.core.entity.Parameter;
-import ru.team.up.sup.core.entity.ParameterType;
 import ru.team.up.sup.core.service.ParameterService;
 import ru.team.up.sup.core.service.UserService;
 
@@ -29,7 +33,7 @@ public class PublicAdminParameterController {
         model.addAttribute("newParameter", new Parameter());
         model.addAttribute("allParams", parameterService.getAllParameters());
         model.addAttribute("allSystems", AppModuleNameDto.values());
-        model.addAttribute("allTypes", ParameterType.values());
+        model.addAttribute("allTypes", SupParameterTypeDto.values());
         return "newAdmin";
     }
 
@@ -48,8 +52,8 @@ public class PublicAdminParameterController {
 
     @PostMapping("/edit")
     public String editParameter(Parameter parameter,
-                                  @RequestParam(value = "parameterType", required = false) String parameterType,
-                                  @RequestParam(value = "systemName", required = false) String systemName) {
+                                @RequestParam(value = "parameterType", required = false) String parameterType,
+                                @RequestParam(value = "systemName", required = false) String systemName) {
 
         setFields(parameter, parameterType, systemName);
 
@@ -78,7 +82,7 @@ public class PublicAdminParameterController {
 
     public void setFields(Parameter parameter, String parameterType, String systemName) {
 
-        parameter.setParameterType(ParameterType.valueOf(parameterType));
+        parameter.setParameterType(SupParameterTypeDto.valueOf(parameterType));
         parameter.setSystemName(AppModuleNameDto.valueOf(systemName));
         parameter.setUserWhoLastChangeParameters(userService.getUserByName(
                 SecurityContextHolder.getContext().
