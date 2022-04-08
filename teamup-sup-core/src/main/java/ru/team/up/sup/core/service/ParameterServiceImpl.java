@@ -23,11 +23,12 @@ import java.util.Optional;
 @Slf4j
 @Service
 @Transactional
-@AllArgsConstructor(onConstructor = @__(@Autowired))
+@AllArgsConstructor
 public class ParameterServiceImpl implements ParameterService {
 
     private ParameterRepository parameterRepository;
     private KafkaSupService kafkaSupService;
+    private DefaultParameterGetter defaultParameterGetter;
 
 //    @PostConstruct
 //    private void init(){
@@ -128,17 +129,15 @@ public class ParameterServiceImpl implements ParameterService {
     }
 
     @Override
-    public void compareAndUpdateWithFile() {
-        List<SupParameterDto<?>> list = readParametersFromFile();
-        for (SupParameterDto fileParam : list) {
-            Parameter bdParam = parameterRepository.getParameterByParameterName(fileParam.getParameterName());
-
+    public void compareWithDefaultAndUpdate() {
+        for (SupParameterDto defaultParam : defaultParameterGetter.getParameters()) {
+            Parameter bdParam = parameterRepository.getParameterByParameterName(defaultParam.getParameterName());
             if (bdParam == null) {
                 parameterRepository.save(Parameter.builder()
-                        .parameterName(fileParam.getParameterName())
-                        .parameterType(fileParam.getParameterType())
-                        .systemName(fileParam.getSystemName())
-                        .parameterValue(fileParam.getParameterValue().toString())
+                        .parameterName(defaultParam.getParameterName())
+                        .parameterType(defaultParam.getParameterType())
+                        .systemName(defaultParam.getSystemName())
+                        .parameterValue(defaultParam.getParameterValue().toString())
                         .creationDate(LocalDate.now())
                         .updateDate(LocalDateTime.now())
                         .build());

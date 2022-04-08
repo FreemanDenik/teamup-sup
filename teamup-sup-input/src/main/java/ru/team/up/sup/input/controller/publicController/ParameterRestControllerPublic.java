@@ -61,7 +61,7 @@ public class ParameterRestControllerPublic {
         } else {
             responseEntity = ResponseEntity.ok(parameterList);
         }
-        parameterService.compareAndUpdateWithFile();
+        parameterService.compareWithDefaultAndUpdate();
         log.debug("Получили ответ {}", responseEntity);
         return responseEntity;
     }

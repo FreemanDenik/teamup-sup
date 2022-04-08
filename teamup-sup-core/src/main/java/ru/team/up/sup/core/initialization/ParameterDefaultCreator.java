@@ -21,7 +21,7 @@ public class ParameterDefaultCreator {
 
     private ParameterService parameterService;
 
-    @PostConstruct
+//    @PostConstruct
     public void parameterDefaultCreator() {
         parameterService.saveParameter(Parameter.builder()
                 .parameterName("testName")

@@ -53,5 +53,5 @@ public interface ParameterService {
     Parameter editParameter(Parameter parameter);
 
     List<SupParameterDto<?>> readParametersFromFile();
-    void compareAndUpdateWithFile();
+    void compareWithDefaultAndUpdate();
 }

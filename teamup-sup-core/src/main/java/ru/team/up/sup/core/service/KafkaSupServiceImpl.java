@@ -95,7 +95,7 @@ public class KafkaSupServiceImpl implements KafkaSupService {
         } else {
             SupParameterDto<?> dto = ParameterToDto.convert(parameter);
             dto.setUpdateTime(LocalDateTime.now());
-            dto.setDeleted(true);
+//            dto.setDeleted(true);
             ListSupParameterDto listToSend = new ListSupParameterDto();
             listToSend.addParameter(dto);
             listSupParameterDtoKafkaTemplate.send(TOPIC, listToSend.getModuleName(), listToSend);
