@@ -14,10 +14,8 @@ import java.time.LocalDateTime;
  */
 
 @Entity
-@Getter
-@Setter
+@Data
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -43,6 +41,12 @@ public class Parameter {
 
     @Column(nullable = false)
     private LocalDate creationDate;
+
+    @Column
+    private Boolean inUse;
+
+    @Column
+    private LocalDate lastUsedDate;
 
     @Column
     private LocalDateTime updateDate;

@@ -2,12 +2,13 @@ package ru.team.up.sup.core.service.listener;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import ru.team.up.dto.AppModuleNameDto;
 import ru.team.up.sup.core.service.KafkaSupService;
 import ru.team.up.sup.core.service.ParameterService;
+
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -24,7 +25,10 @@ public class KafkaMessageListener {
             log.debug("KafkaListener: модуль запрашивающий настройки = null");
             throw new RuntimeException("Модуль запрашивающий настройки = null");
         }
-        kafkaSupService.send(parameterService.getParametersBySystemName(module));
+        parameterService.compareWithDefaultAndUpdate(module);
+        kafkaSupService.send(parameterService.getParametersBySystemName(module).stream()
+                .filter(p -> p.getInUse())
+                .collect(Collectors.toList()));
         log.debug("KafkaListener: настройки для модуля {} отправлены", module);
     }
 }

@@ -1,6 +1,5 @@
 package ru.team.up.sup.core.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +11,10 @@ import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.exception.NoContentException;
 import ru.team.up.sup.core.repositories.ParameterRepository;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -26,14 +23,19 @@ import java.util.Optional;
 @AllArgsConstructor
 public class ParameterServiceImpl implements ParameterService {
 
-    private ParameterRepository parameterRepository;
-    private KafkaSupService kafkaSupService;
-    private DefaultParameterGetter defaultParameterGetter;
+    private Long daysToSaveParam = 7L;
+    private final ParameterRepository parameterRepository;
+    private final KafkaSupService kafkaSupService;
+    private final DefaultParameterGetter defaultParameterGetter;
 
-//    @PostConstruct
-//    private void init(){
-//        compareAndUpdateWithFile();
-//    }
+    @Autowired
+    public ParameterServiceImpl(ParameterRepository parameterRepository,
+                                KafkaSupService kafkaSupService,
+                                DefaultParameterGetter defaultParameterGetter) {
+        this.parameterRepository = parameterRepository;
+        this.kafkaSupService = kafkaSupService;
+        this.defaultParameterGetter = defaultParameterGetter;
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -98,7 +100,6 @@ public class ParameterServiceImpl implements ParameterService {
         log.debug("Проверка существования параметра в БД с id = {}", id);
         Parameter parameter = parameterRepository.findById(id).orElseThrow(() -> new NoContentException());
         parameterRepository.deleteById(id);
-        kafkaSupService.delete(parameter);
         log.debug("Удалили параметр с id = {} из БД", id);
     }
 
@@ -116,33 +117,55 @@ public class ParameterServiceImpl implements ParameterService {
     }
 
     @Override
-    public List<SupParameterDto<?>> readParametersFromFile() {
-        ObjectMapper mapper = new ObjectMapper();
-        List<SupParameterDto<?>> list = List.of();
-        try {
-            list = Arrays.asList(mapper.readValue(new File("./Parameters.json"),
-                    SupParameterDto[].class));
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void compareWithDefaultAndUpdate(AppModuleNameDto systemName) {
+        List<Parameter> bdParams = parameterRepository.getParametersBySystemName(systemName);
+        Map<String, SupParameterDto> defaultParamMap = defaultParameterGetter.getParameters(systemName);
+        for (Parameter bdParam : bdParams) {
+            if (!defaultParamMap.containsKey(bdParam.getParameterName())) {
+                log.debug("Параметр {} не используется в модуле {}", bdParam.getParameterName(), systemName);
+                bdParam.setInUse(false);
+                parameterRepository.save(bdParam);
+            } else {
+                bdParam.setInUse(true);
+                bdParam.setLastUsedDate(LocalDate.now());
+                parameterRepository.save(bdParam);
+                defaultParamMap.remove(bdParam.getParameterName());
+                log.debug("Параметр {} используется в модуле {}. Дата последнего использования изменена на {}.",
+                        bdParam.getParameterName(),
+                        systemName,
+                        bdParam.getLastUsedDate());
+            }
         }
-        return list;
-    }
-
-    @Override
-    public void compareWithDefaultAndUpdate() {
-        for (SupParameterDto defaultParam : defaultParameterGetter.getParameters()) {
-            Parameter bdParam = parameterRepository.getParameterByParameterName(defaultParam.getParameterName());
-            if (bdParam == null) {
+        if (!defaultParamMap.isEmpty()) {
+            for (SupParameterDto defaultParam : defaultParamMap.values()) {
+                log.debug("Параметр {} используется в модуле {}, но его нет в БД.",
+                        defaultParam.getParameterName(),
+                        systemName);
                 parameterRepository.save(Parameter.builder()
                         .parameterName(defaultParam.getParameterName())
                         .parameterType(defaultParam.getParameterType())
                         .systemName(defaultParam.getSystemName())
                         .parameterValue(defaultParam.getParameterValue().toString())
                         .creationDate(LocalDate.now())
-                        .updateDate(LocalDateTime.now())
+                        .inUse(true)
+                        .lastUsedDate(LocalDate.now())
                         .build());
+                log.debug("Параметр {} добавлен в БД.", defaultParam.getParameterName());
             }
         }
     }
 
+    @Override
+    public void purge(AppModuleNameDto system) {
+        List<Parameter> listToCheck = parameterRepository.findByInUseAndSystemName(false, system);
+        listToCheck.stream()
+                .filter(p -> p.getLastUsedDate() == null ||
+                        LocalDate.now().isAfter(p.getLastUsedDate().plusDays(daysToSaveParam)))
+                .forEach(p -> {
+                    parameterRepository.deleteById(p.getId());
+                    log.debug("Удалён параметр {}, т.к. он не использовался более {} дней",
+                            p.getParameterName(),
+                            daysToSaveParam);
+                });
+    }
 }
