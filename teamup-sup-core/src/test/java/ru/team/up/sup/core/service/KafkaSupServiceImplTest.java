@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import ru.team.up.dto.AppModuleNameDto;
 import ru.team.up.dto.ListSupParameterDto;
-import ru.team.up.dto.SupParameterDto;
 import ru.team.up.dto.SupParameterTypeDto;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.entity.User;
@@ -120,21 +119,6 @@ class KafkaSupServiceImplTest {
         for (ListSupParameterDto list : ParameterToDto.parseParameterListToListsDto(inputList)) {
             verify(kafkaTemplate).send(testTopic, list.getModuleName(), list);
         }
-//        ArgumentCaptor<String> topicArgumentCaptor =
-//                ArgumentCaptor.forClass(String.class);
-//        ArgumentCaptor<AppModuleNameDto> appModuleNameDtoArgumentCaptor =
-//                ArgumentCaptor.forClass(AppModuleNameDto.class);
-//        ArgumentCaptor<ListSupParameterDto> listSupParameterDtoArgumentCaptor =
-//                ArgumentCaptor.forClass(ListSupParameterDto.class);
-//        verify(kafkaTemplate).send(topicArgumentCaptor.capture(),
-//                appModuleNameDtoArgumentCaptor.capture(),
-//                listSupParameterDtoArgumentCaptor.capture());
-//        String capturedTopic = topicArgumentCaptor.getValue();
-//        assertThat(capturedTopic).isEqualTo(testTopic);
-//        AppModuleNameDto capturedModule = appModuleNameDtoArgumentCaptor.getValue();
-//        assertThat(capturedModule).isEqualTo(listToSend.getModuleName());
-//        ListSupParameterDto capturedList = listSupParameterDtoArgumentCaptor.getValue();
-//        assertThat(capturedList).isEqualTo(listToSend);
     }
 
     @Test
@@ -145,40 +129,5 @@ class KafkaSupServiceImplTest {
         assertThatThrownBy(() -> underTest.send(List.of()))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("В метод send пришел пустой лист или null.");
-    }
-
-    @Test
-    void canSendDeletedParameter() {
-        // Given
-        SupParameterDto<?> deletedParam = ParameterToDto.convert(testParam1);
-        deletedParam.setUpdateTime(null);
-        listToSend.addParameter(deletedParam);
-        // When
-        underTest.delete(testParam1);
-        // Then
-        ArgumentCaptor<String> topicArgumentCaptor =
-                ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<AppModuleNameDto> appModuleNameDtoArgumentCaptor =
-                ArgumentCaptor.forClass(AppModuleNameDto.class);
-        ArgumentCaptor<ListSupParameterDto> listSupParameterDtoArgumentCaptor =
-                ArgumentCaptor.forClass(ListSupParameterDto.class);
-        verify(kafkaTemplate).send(topicArgumentCaptor.capture(),
-                appModuleNameDtoArgumentCaptor.capture(),
-                listSupParameterDtoArgumentCaptor.capture());
-        String capturedTopic = topicArgumentCaptor.getValue();
-        assertThat(capturedTopic).isEqualTo(testTopic);
-        AppModuleNameDto capturedModule = appModuleNameDtoArgumentCaptor.getValue();
-        assertThat(capturedModule).isEqualTo(testParam1.getSystemName());
-        SupParameterDto<?> capturedParam = listSupParameterDtoArgumentCaptor.getValue().getList().get(0);
-        assertThat(capturedParam.getUpdateTime().isAfter(testParam1.getUpdateDate()));
-        capturedParam.setUpdateTime(null);
-        assertThat(capturedParam).isEqualTo(deletedParam);
-    }
-
-    @Test
-    void willThrownWhenDeletedParameterIsNull() {
-        assertThatThrownBy(() -> underTest.delete(null))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("В метод delete вместо параметра пришел null.");
     }
 }

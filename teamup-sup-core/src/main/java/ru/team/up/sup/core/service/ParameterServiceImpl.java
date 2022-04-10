@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.team.up.dto.AppModuleNameDto;
+import ru.team.up.dto.ListSupParameterDto;
 import ru.team.up.dto.SupParameterDto;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.exception.NoContentException;
@@ -14,8 +15,9 @@ import ru.team.up.sup.core.repositories.ParameterRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -26,15 +28,12 @@ public class ParameterServiceImpl implements ParameterService {
     private Long daysToSaveParam = 7L;
     private final ParameterRepository parameterRepository;
     private final KafkaSupService kafkaSupService;
-    private final DefaultParameterGetter defaultParameterGetter;
 
     @Autowired
     public ParameterServiceImpl(ParameterRepository parameterRepository,
-                                KafkaSupService kafkaSupService,
-                                DefaultParameterGetter defaultParameterGetter) {
+                                KafkaSupService kafkaSupService) {
         this.parameterRepository = parameterRepository;
         this.kafkaSupService = kafkaSupService;
-        this.defaultParameterGetter = defaultParameterGetter;
     }
 
     @Override
@@ -117,55 +116,75 @@ public class ParameterServiceImpl implements ParameterService {
     }
 
     @Override
-    public void compareWithDefaultAndUpdate(AppModuleNameDto systemName) {
-        List<Parameter> bdParams = parameterRepository.getParametersBySystemName(systemName);
-        Map<String, SupParameterDto> defaultParamMap = defaultParameterGetter.getParameters(systemName);
-        for (Parameter bdParam : bdParams) {
-            if (!defaultParamMap.containsKey(bdParam.getParameterName())) {
-                log.debug("Параметр {} не используется в модуле {}", bdParam.getParameterName(), systemName);
-                bdParam.setInUse(false);
-                parameterRepository.save(bdParam);
-            } else {
-                bdParam.setInUse(true);
-                bdParam.setLastUsedDate(LocalDate.now());
-                parameterRepository.save(bdParam);
-                defaultParamMap.remove(bdParam.getParameterName());
-                log.debug("Параметр {} используется в модуле {}. Дата последнего использования изменена на {}.",
-                        bdParam.getParameterName(),
-                        systemName,
-                        bdParam.getLastUsedDate());
-            }
+    public void compareWithDefaultAndUpdate(ListSupParameterDto dtoList) {
+        if (dtoList == null ||
+                dtoList.getModuleName() == null ||
+                dtoList.getList() == null ||
+                dtoList.getList().isEmpty()) {
+            throw new RuntimeException("Получен пустой лист параметров по умолчанию");
         }
-        if (!defaultParamMap.isEmpty()) {
-            for (SupParameterDto defaultParam : defaultParamMap.values()) {
-                log.debug("Параметр {} используется в модуле {}, но его нет в БД.",
-                        defaultParam.getParameterName(),
-                        systemName);
-                parameterRepository.save(Parameter.builder()
-                        .parameterName(defaultParam.getParameterName())
-                        .parameterType(defaultParam.getParameterType())
-                        .systemName(defaultParam.getSystemName())
-                        .parameterValue(defaultParam.getParameterValue().toString())
-                        .creationDate(LocalDate.now())
-                        .inUse(true)
-                        .lastUsedDate(LocalDate.now())
-                        .build());
-                log.debug("Параметр {} добавлен в БД.", defaultParam.getParameterName());
-            }
-        }
+        List<Parameter> bdParams = parameterRepository.getParametersBySystemName(dtoList.getModuleName());
+        Set<String> defaultNames = dtoList.getList().stream().map(p -> p.getParameterName()).collect(Collectors.toSet());
+        Set<String> bdNames = bdParams.stream().map(p -> p.getParameterName()).collect(Collectors.toSet());
+
+        bdParams.stream()
+                .filter(p -> defaultNames.contains(p.getParameterName()))
+                .forEach(this::markAsInUseAndSave);
+
+        bdParams.stream()
+                .filter(p -> !defaultNames.contains(p.getParameterName()))
+                .forEach(this::markAsNotInUseAndSave);
+
+        dtoList.getList().stream()
+                .filter(p -> !bdNames.contains(p.getParameterName()))
+                .forEach(this::addNewDefaultToDb);
     }
 
     @Override
-    public void purge(AppModuleNameDto system) {
-        List<Parameter> listToCheck = parameterRepository.findByInUseAndSystemName(false, system);
-        listToCheck.stream()
-                .filter(p -> p.getLastUsedDate() == null ||
-                        LocalDate.now().isAfter(p.getLastUsedDate().plusDays(daysToSaveParam)))
-                .forEach(p -> {
-                    parameterRepository.deleteById(p.getId());
-                    log.debug("Удалён параметр {}, т.к. он не использовался более {} дней",
-                            p.getParameterName(),
-                            daysToSaveParam);
-                });
+    public void purge() {
+        parameterRepository.findAll().stream()
+                .filter(p -> p.getInUse() == null || !p.getInUse())
+                .filter(this::parameterLastUsedDateFilter)
+                .forEach(p -> parameterRepository.deleteById(p.getId()));
     }
+
+    private boolean parameterLastUsedDateFilter(Parameter parameter) {
+        LocalDate date = parameter.getLastUsedDate();
+        return date == null || LocalDate.now().isAfter(date.plusDays(daysToSaveParam));
+    }
+
+    private void markAsNotInUseAndSave(Parameter parameter) {
+        log.debug("Параметр {} не используется в модуле {}",
+                parameter.getParameterName(),
+                parameter.getSystemName());
+        parameter.setInUse(false);
+        parameterRepository.save(parameter);
+    }
+
+    private void markAsInUseAndSave(Parameter parameter) {
+        parameter.setInUse(true);
+        parameter.setLastUsedDate(LocalDate.now());
+        parameterRepository.save(parameter);
+        log.debug("Параметр {} используется в модуле {}. Дата последнего использования изменена на {}.",
+                parameter.getParameterName(),
+                parameter.getSystemName(),
+                parameter.getLastUsedDate());
+    }
+
+    private void addNewDefaultToDb(SupParameterDto defaultParam) {
+        log.debug("Параметр {} используется в модуле {}, но его нет в БД.",
+                defaultParam.getParameterName(),
+                defaultParam.getSystemName());
+        parameterRepository.save(Parameter.builder()
+                .parameterName(defaultParam.getParameterName())
+                .parameterType(defaultParam.getParameterType())
+                .systemName(defaultParam.getSystemName())
+                .parameterValue(defaultParam.getParameterValue().toString())
+                .creationDate(LocalDate.now())
+                .inUse(true)
+                .lastUsedDate(LocalDate.now())
+                .build());
+        log.debug("Параметр {} добавлен в БД.", defaultParam.getParameterName());
+    }
+
 }

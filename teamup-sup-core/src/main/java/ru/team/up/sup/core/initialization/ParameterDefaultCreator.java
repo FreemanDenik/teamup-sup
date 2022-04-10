@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.team.up.dto.AppModuleNameDto;
 import ru.team.up.sup.core.entity.Parameter;
-import ru.team.up.sup.core.service.ParameterService;
+import ru.team.up.sup.core.repositories.ParameterRepository;
+import ru.team.up.sup.core.service.KafkaSupService;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
@@ -19,11 +20,12 @@ import static ru.team.up.dto.SupParameterTypeDto.*;
 @AllArgsConstructor
 public class ParameterDefaultCreator {
 
-    private ParameterService parameterService;
+    private final ParameterRepository parameterRepository;
+    private final KafkaSupService kafkaSupService;
 
     @PostConstruct
     public void parameterDefaultCreator() {
-        parameterService.saveParameter(Parameter.builder()
+        parameterRepository.save(Parameter.builder()
                 .parameterName("testName")
                 .parameterType(STRING)
                 .parameterValue("testValue")
@@ -32,7 +34,7 @@ public class ParameterDefaultCreator {
                 .updateDate(LocalDateTime.now())
                 .build()
         );
-        parameterService.saveParameter(Parameter.builder()
+        parameterRepository.save(Parameter.builder()
                 .parameterName("testName2")
                 .parameterType(STRING)
                 .parameterValue("testValue2")
@@ -41,7 +43,7 @@ public class ParameterDefaultCreator {
                 .updateDate(LocalDateTime.now()
                 ).build()
         );
-        parameterService.saveParameter(Parameter.builder()
+        parameterRepository.save(Parameter.builder()
                 .parameterName("СIAMetingFlag")
                 .parameterType(STRING)
                 .parameterValue("AgentFreed0m")
@@ -50,7 +52,7 @@ public class ParameterDefaultCreator {
                 .updateDate(LocalDateTime.now()
                 ).build()
         );
-        parameterService.saveParameter(Parameter.builder()
+        parameterRepository.save(Parameter.builder()
                 .parameterName("MonetizationLevel")
                 .parameterType(INTEGER)
                 .parameterValue("0")
@@ -59,7 +61,7 @@ public class ParameterDefaultCreator {
                 .updateDate(LocalDate.of(2019, 12, 12).atTime(13, 12)
                 ).build()
         );
-        parameterService.saveParameter(Parameter.builder()
+        parameterRepository.save(Parameter.builder()
                 .parameterName("DestroySystem")
                 .parameterType(BOOLEAN)
                 .parameterValue("false")
@@ -68,7 +70,7 @@ public class ParameterDefaultCreator {
                 .updateDate(LocalDate.of(2019, 12, 12).atTime(13, 12)
                 ).build()
         );
-        parameterService.saveParameter(Parameter.builder()
+        parameterRepository.save(Parameter.builder()
                 .parameterName("TEAMUP_CORE_GET_EVENT_BY_ID_ENABLED")
                 .parameterType(BOOLEAN)
                 .parameterValue("true")
@@ -77,7 +79,7 @@ public class ParameterDefaultCreator {
                 .updateDate(LocalDate.now().atTime(LocalTime.now()))
                 .build()
         );
-        parameterService.saveParameter(Parameter.builder()
+        parameterRepository.save(Parameter.builder()
                 .parameterName("TEAMUP_CORE_GET_USER_BY_ID_ENABLED")
                 .parameterType(BOOLEAN)
                 .parameterValue("true")
@@ -86,7 +88,7 @@ public class ParameterDefaultCreator {
                 .updateDate(LocalDate.now().atTime(LocalTime.now()))
                 .build()
         );
-        parameterService.saveParameter(Parameter.builder()
+        parameterRepository.save(Parameter.builder()
                 .parameterName("TEAMUP_CORE_COUNT_RETURN_CITY")
                 .parameterType(INTEGER)
                 .parameterValue("10")
@@ -95,5 +97,6 @@ public class ParameterDefaultCreator {
                 .updateDate(LocalDate.now().atTime(LocalTime.now()))
                 .build()
         );
+        kafkaSupService.send(parameterRepository.findAll());
     }
 }

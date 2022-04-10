@@ -1,6 +1,7 @@
 package ru.team.up.sup.core.service;
 
 import ru.team.up.dto.AppModuleNameDto;
+import ru.team.up.dto.ListSupParameterDto;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.exception.NoContentException;
 
@@ -49,9 +50,23 @@ public interface ParameterService {
      */
     void deleteParameter(Long id);
 
+    /**
+     * @param parameter Объект класса ru.team.up.core.entity.Parameter
+     * @return Возвращает сохраненный в БД объект parameter
+     */
     Parameter editParameter(Parameter parameter);
 
-    void compareWithDefaultAndUpdate(AppModuleNameDto systemName);
+    /**
+     * @param dtoList Объект класса ru.team.up.dto.ListSupParameterDto
+     *                Метод сравнивает параметры по умолчанию полученные от модуля
+     *                Параметры, которых нет в БД добавляются автоматически
+     *                Неиспользуемые модулем параметры получают флаг inUse = false
+     *                Используемые модулем параметры получают флаг inUse = true и обновляют дату lastUsedDate
+     */
+    void compareWithDefaultAndUpdate(ListSupParameterDto dtoList);
 
-    void purge(AppModuleNameDto system);
+    /**
+     * Метод удаляет все параметры в БД с флагом inUse = false и датой lastUsedDate более 7 дней
+     */
+    void purge();
 }

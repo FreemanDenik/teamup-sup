@@ -6,11 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.team.up.dto.AppModuleNameDto;
+import ru.team.up.dto.ListSupParameterDto;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.service.ParameterService;
 import ru.team.up.sup.core.service.ParameterServiceRest;
@@ -50,23 +48,11 @@ public class ParameterRestControllerPublic {
      *
      */
 
-    @GetMapping("/update")
-    @Operation(summary = "Обновление списка всех параметров")
-    public ResponseEntity updateParameters() {
-        log.debug("Получен запрос на обновление всех параметров");
-        parameterService.compareWithDefaultAndUpdate(AppModuleNameDto.TEAMUP_CORE);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    /**
-     *
-     */
-
     @GetMapping("/purge")
     @Operation(summary = "Удаление неиспользуемых параметров")
     public ResponseEntity purgeParameters() {
         log.debug("Получен запрос на удаление неиспользуемых параметров");
-        parameterService.purge(AppModuleNameDto.TEAMUP_CORE);
+        parameterService.purge();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -169,4 +155,18 @@ public class ParameterRestControllerPublic {
         log.debug("Получили ответ {}", responseEntity);
         return responseEntity;
     }
+
+    @PostMapping(
+            value = "/update/{systemName}/")
+    @Operation(
+            summary = "Получение параметров по умолчанию от модуля"
+    )
+    public ListSupParameterDto processDefaultParamBySystemName(
+            @PathVariable(value = "systemName") AppModuleNameDto systemName,
+            @RequestBody ListSupParameterDto listDto) {
+        log.debug("Получили параметры по умолчанию от модуля {}", systemName);
+        parameterService.compareWithDefaultAndUpdate(listDto);
+        return listDto;
+    }
+
 }

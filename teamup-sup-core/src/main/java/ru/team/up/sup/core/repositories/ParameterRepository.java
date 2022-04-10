@@ -24,5 +24,4 @@ public interface ParameterRepository extends JpaRepository<Parameter, Long> {
 
     List<Parameter> findByUpdateDateBetween(LocalDateTime date1, LocalDateTime date2);
 
-    List<Parameter> findByInUseAndSystemName(Boolean inUse, AppModuleNameDto systemName);
 }

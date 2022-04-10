@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.team.up.dto.AppModuleNameDto;
+import ru.team.up.dto.ListSupParameterDto;
 import ru.team.up.dto.SupParameterDto;
 import ru.team.up.dto.SupParameterTypeDto;
 import ru.team.up.sup.core.entity.Parameter;
@@ -15,11 +16,10 @@ import ru.team.up.sup.core.repositories.ParameterRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 
@@ -29,8 +29,6 @@ class ParameterServiceImplTest {
     private ParameterService underTest;
     @Mock
     private ParameterRepository parameterRepository;
-    @Mock
-    private DefaultParameterGetter defaultParameterGetter;
     @Mock
     private KafkaSupService kafkaSupService;
 
@@ -46,13 +44,12 @@ class ParameterServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        underTest = new ParameterServiceImpl(parameterRepository, kafkaSupService, defaultParameterGetter);
+        underTest = new ParameterServiceImpl(parameterRepository, kafkaSupService);
     }
 
     @Test
     void testCompareParameterInBdInUse() {
         // Given
-        AppModuleNameDto testedSystem = AppModuleNameDto.TEAMUP_CORE;
         Parameter bdParam = Parameter.builder()
                 .id(1L)
                 .parameterName("TestParam3")
@@ -65,6 +62,18 @@ class ParameterServiceImplTest {
                 .updateDate(LocalDateTime.now())
                 .userWhoLastChangeParameters(testUser)
                 .build();
+        Parameter bdParamResult = Parameter.builder()
+                .id(1L)
+                .parameterName("TestParam3")
+                .parameterType(SupParameterTypeDto.STRING)
+                .systemName(AppModuleNameDto.TEAMUP_CORE)
+                .parameterValue("Hello world!")
+                .creationDate(LocalDate.now())
+                .inUse(true)
+                .lastUsedDate(LocalDate.now())
+                .updateDate(LocalDateTime.now())
+                .userWhoLastChangeParameters(testUser)
+                .build();
         SupParameterDto defaultParam = SupParameterDto.builder()
                 .parameterName("TestParam3")
                 .parameterValue("Hello world!")
@@ -72,29 +81,25 @@ class ParameterServiceImplTest {
                 .systemName(AppModuleNameDto.TEAMUP_CORE)
                 .updateTime(LocalDateTime.now())
                 .build();
-
-        Map<String,SupParameterDto> defaultParamMap = new HashMap<>();
-        defaultParamMap.put(defaultParam.getParameterName(), defaultParam);
-        doReturn(defaultParamMap).when(defaultParameterGetter).getParameters(testedSystem);
+        ListSupParameterDto listSupParameterDto = new ListSupParameterDto();
+        listSupParameterDto.addParameter(defaultParam);
         doReturn(List.of(bdParam)).when(parameterRepository)
-                .getParametersBySystemName(testedSystem);
+                .getParametersBySystemName(listSupParameterDto.getModuleName());
 
         // When
-        underTest.compareWithDefaultAndUpdate(testedSystem);
-        bdParam.setInUse(true);
-        bdParam.setLastUsedDate(LocalDate.now());
+        underTest.compareWithDefaultAndUpdate(listSupParameterDto);
+
 
         // Then
         ArgumentCaptor<Parameter> parameterArgumentCaptor =
                 ArgumentCaptor.forClass(Parameter.class);
         verify(parameterRepository).save(parameterArgumentCaptor.capture());
-        assertThat(parameterArgumentCaptor.getValue()).isEqualTo(bdParam);
+        assertThat(parameterArgumentCaptor.getValue()).isEqualTo(bdParamResult);
     }
 
     @Test
     void testCompareParameterInBdNotInUse() {
         // Given
-        AppModuleNameDto testedSystem = AppModuleNameDto.TEAMUP_CORE;
         Parameter bdParam = Parameter.builder()
                 .id(1L)
                 .parameterName("TestParam1")
@@ -107,21 +112,49 @@ class ParameterServiceImplTest {
                 .updateDate(LocalDateTime.now())
                 .userWhoLastChangeParameters(testUser)
                 .build();
+        Parameter bdParamResult = Parameter.builder()
+                .id(1L)
+                .parameterName("TestParam1")
+                .parameterType(SupParameterTypeDto.STRING)
+                .systemName(AppModuleNameDto.TEAMUP_CORE)
+                .parameterValue("Hello world!")
+                .creationDate(LocalDate.now())
+                .inUse(false)
+                .lastUsedDate(null)
+                .updateDate(bdParam.getUpdateDate())
+                .userWhoLastChangeParameters(testUser)
+                .build();
+        SupParameterDto defaultParam = SupParameterDto.builder()
+                .parameterName("TestParam3")
+                .parameterValue("Hello world!")
+                .parameterType(SupParameterTypeDto.STRING)
+                .systemName(AppModuleNameDto.TEAMUP_CORE)
+                .updateTime(LocalDateTime.now())
+                .build();
+        Parameter newParam = Parameter.builder()
+                .parameterName(defaultParam.getParameterName())
+                .parameterType(defaultParam.getParameterType())
+                .systemName(defaultParam.getSystemName())
+                .parameterValue(defaultParam.getParameterValue().toString())
+                .creationDate(LocalDate.now())
+                .inUse(true)
+                .lastUsedDate(LocalDate.now())
+                .build();
 
-        Map<String,SupParameterDto> defaultParamMap = new HashMap<>();
-        doReturn(defaultParamMap).when(defaultParameterGetter).getParameters(testedSystem);
+        ListSupParameterDto listSupParameterDto = new ListSupParameterDto();
+        listSupParameterDto.addParameter(defaultParam);
         doReturn(List.of(bdParam)).when(parameterRepository)
-                .getParametersBySystemName(testedSystem);
+                .getParametersBySystemName(listSupParameterDto.getModuleName());
 
         // When
-        underTest.compareWithDefaultAndUpdate(testedSystem);
-        bdParam.setInUse(false);
+        underTest.compareWithDefaultAndUpdate(listSupParameterDto);
 
         // Then
-        ArgumentCaptor<Parameter> parameterArgumentCaptor =
-                ArgumentCaptor.forClass(Parameter.class);
-        verify(parameterRepository).save(parameterArgumentCaptor.capture());
-        assertThat(parameterArgumentCaptor.getValue()).isEqualTo(bdParam);
+        ArgumentCaptor<Parameter> parameterArgumentCaptor = ArgumentCaptor.forClass(Parameter.class);
+        verify(parameterRepository, times(2)).save(parameterArgumentCaptor.capture());
+        List<Parameter> results = parameterArgumentCaptor.getAllValues();
+        assertThat(results.get(0)).isEqualTo(bdParamResult);
+        assertThat(results.get(1)).isEqualTo(newParam);
     }
 
     @Test
@@ -145,20 +178,69 @@ class ParameterServiceImplTest {
                 .lastUsedDate(LocalDate.now())
                 .build();
 
-        Map<String,SupParameterDto> defaultParamMap = new HashMap<>();
-        defaultParamMap.put(defaultParam.getParameterName(),defaultParam);
-        doReturn(defaultParamMap).when(defaultParameterGetter).getParameters(testedSystem);
+        ListSupParameterDto listSupParameterDto = new ListSupParameterDto();
+        listSupParameterDto.addParameter(defaultParam);
         doReturn(List.of()).when(parameterRepository)
                 .getParametersBySystemName(testedSystem);
 
         // When
-        underTest.compareWithDefaultAndUpdate(testedSystem);
+        underTest.compareWithDefaultAndUpdate(listSupParameterDto);
 
         // Then
         ArgumentCaptor<Parameter> parameterArgumentCaptor =
                 ArgumentCaptor.forClass(Parameter.class);
         verify(parameterRepository).save(parameterArgumentCaptor.capture());
         assertThat(parameterArgumentCaptor.getValue()).isEqualTo(result);
+    }
+
+    @Test
+    void compareWillThrowIfDtoIsNull() {
+        assertThatThrownBy(() -> underTest.compareWithDefaultAndUpdate(null))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Получен пустой лист параметров по умолчанию");
+
+    }
+
+    @Test
+    void compareWillThrowIfModuleIsNull() {
+        // Given
+        final ListSupParameterDto list = new ListSupParameterDto();
+        list.setModuleName(null);
+        list.setList(List.of(SupParameterDto.builder().build()));
+
+        // When Then
+        assertThatThrownBy(() -> underTest.compareWithDefaultAndUpdate(list))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Получен пустой лист параметров по умолчанию");
+
+    }
+
+    @Test
+    void compareWillThrowIfListIsNull() {
+        // Given
+        final ListSupParameterDto list = new ListSupParameterDto();
+        list.setModuleName(AppModuleNameDto.TEAMUP_CORE);
+        list.setList(null);
+
+        // When Then
+        assertThatThrownBy(() -> underTest.compareWithDefaultAndUpdate(list))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Получен пустой лист параметров по умолчанию");
+
+    }
+
+    @Test
+    void compareWillThrowIfListIsEmpty() {
+        // Given
+        final ListSupParameterDto list = new ListSupParameterDto();
+        list.setModuleName(AppModuleNameDto.TEAMUP_CORE);
+        list.setList(List.of());
+
+        // When Then
+        assertThatThrownBy(() -> underTest.compareWithDefaultAndUpdate(list))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Получен пустой лист параметров по умолчанию");
+
     }
 
     @Test
@@ -175,9 +257,9 @@ class ParameterServiceImplTest {
                 .lastUsedDate(null)
                 .updateDate(LocalDateTime.now())
                 .build();
-        doReturn(List.of(testParam1)).when(parameterRepository).findByInUseAndSystemName(false, testParam1.getSystemName());
+        doReturn(List.of(testParam1)).when(parameterRepository).findAll();
         // When
-        underTest.purge(testParam1.getSystemName());
+        underTest.purge();
 
         // Then
         ArgumentCaptor<Long> idArgumentCaptor =
@@ -200,9 +282,9 @@ class ParameterServiceImplTest {
                 .lastUsedDate(LocalDate.now().minusDays(8L))
                 .updateDate(LocalDateTime.now())
                 .build();
-        doReturn(List.of(testParam1)).when(parameterRepository).findByInUseAndSystemName(false, testParam1.getSystemName());
+        doReturn(List.of(testParam1)).when(parameterRepository).findAll();
         // When
-        underTest.purge(testParam1.getSystemName());
+        underTest.purge();
 
         // Then
         ArgumentCaptor<Long> idArgumentCaptor =
@@ -225,12 +307,36 @@ class ParameterServiceImplTest {
                 .lastUsedDate(LocalDate.now().minusDays(1L))
                 .updateDate(LocalDateTime.now())
                 .build();
-        doReturn(List.of(testParam1)).when(parameterRepository).findByInUseAndSystemName(false, testParam1.getSystemName());
+        doReturn(List.of(testParam1)).when(parameterRepository).findAll();
         // When
-        underTest.purge(testParam1.getSystemName());
+        underTest.purge();
 
         // Then
         verify(parameterRepository, never()).deleteById(testParam1.getId());
     }
+
+
+    @Test
+    void dontPurgeIfInUse() {
+        // Given
+        Parameter testParam1 = Parameter.builder()
+                .id(1L)
+                .parameterName("TestParam2")
+                .parameterType(SupParameterTypeDto.STRING)
+                .systemName(AppModuleNameDto.TEAMUP_CORE)
+                .parameterValue("Hello world!")
+                .creationDate(LocalDate.now())
+                .inUse(true)
+                .lastUsedDate(LocalDate.now().minusDays(100L))
+                .updateDate(LocalDateTime.now())
+                .build();
+        doReturn(List.of(testParam1)).when(parameterRepository).findAll();
+        // When
+        underTest.purge();
+
+        // Then
+        verify(parameterRepository, never()).deleteById(testParam1.getId());
+    }
+
 
 }

@@ -25,7 +25,6 @@ public class KafkaMessageListener {
             log.debug("KafkaListener: модуль запрашивающий настройки = null");
             throw new RuntimeException("Модуль запрашивающий настройки = null");
         }
-        parameterService.compareWithDefaultAndUpdate(module);
         kafkaSupService.send(parameterService.getParametersBySystemName(module).stream()
                 .filter(p -> p.getInUse())
                 .collect(Collectors.toList()));
