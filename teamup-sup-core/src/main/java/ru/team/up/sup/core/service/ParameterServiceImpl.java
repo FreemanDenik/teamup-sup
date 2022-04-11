@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @Transactional
-@AllArgsConstructor
 public class ParameterServiceImpl implements ParameterService {
 
     private Long daysToSaveParam = 7L;
@@ -64,8 +63,8 @@ public class ParameterServiceImpl implements ParameterService {
     @Transactional(readOnly = true)
     public Parameter getParameterById(Long id) throws NoContentException {
         log.debug("Старт метода Parameter getParameterById(Long id) с id = {}", id);
-        Parameter parameter = Optional.of(parameterRepository.findById(id)
-                .orElseThrow(() -> new NoContentException())).get();
+        Parameter parameter = parameterRepository.findById(id)
+                .orElseThrow(() -> new NoContentException());
         log.debug("Получили параметр {} из БД", parameter);
         return parameter;
     }
@@ -97,7 +96,7 @@ public class ParameterServiceImpl implements ParameterService {
     public void deleteParameter(Long id) throws NoContentException {
         log.debug("Старт метода void deleteParameter(Parameter parameter) с id = {}", id);
         log.debug("Проверка существования параметра в БД с id = {}", id);
-        Parameter parameter = parameterRepository.findById(id).orElseThrow(() -> new NoContentException());
+        parameterRepository.findById(id).orElseThrow(() -> new NoContentException());
         parameterRepository.deleteById(id);
         log.debug("Удалили параметр с id = {} из БД", id);
     }
@@ -111,7 +110,7 @@ public class ParameterServiceImpl implements ParameterService {
         parameter.setUpdateDate(LocalDateTime.now());
         Parameter editedParam = parameterRepository.save(parameter);
         log.debug("Изменили параметр в БД {}", editedParam);
-        kafkaSupService.send(editedParam);
+        kafkaSupService.send(parameter);
         return editedParam;
     }
 
