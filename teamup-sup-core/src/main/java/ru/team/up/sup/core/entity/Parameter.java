@@ -2,6 +2,7 @@ package ru.team.up.sup.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import ru.team.up.dto.AppModuleNameDto;
 import ru.team.up.dto.SupParameterTypeDto;
 
@@ -45,6 +46,7 @@ public class Parameter {
     @Column
     private Boolean inUse;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column
     private LocalDate lastUsedDate;
 

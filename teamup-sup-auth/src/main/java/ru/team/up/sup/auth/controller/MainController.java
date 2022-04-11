@@ -92,14 +92,14 @@ public class MainController {
         return "user";
     }
 
-    /**
-     * @return переход на страницу для пользователя с ролью ADMIN
-     */
-    @GetMapping(value = "/admin")
-    public String printAdminPage(Model model) {
-        model.addAttribute("loggedUser", getCurrentAccount());
-        return "admin";
-    }
+//    /**
+//     * @return переход на страницу для пользователя с ролью ADMIN
+//     */
+//    @GetMapping(value = "/admin")
+//    public String printAdminPage(Model model) {
+//        model.addAttribute("loggedUser", getCurrentAccount());
+//        return "admin";
+//    }
 
     /**
      * метод для перехода на страницу регистрации
