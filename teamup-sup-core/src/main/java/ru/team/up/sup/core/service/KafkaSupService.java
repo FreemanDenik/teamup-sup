@@ -23,11 +23,4 @@ public interface KafkaSupService {
      * @param list лист с объектами для конфигурации работы модулей приложения
      */
     void send(List<Parameter> list);
-
-    /**
-     * Отправляет в kafka параметр с  полем isDeleted = true
-     *
-     * @param parameter объект для конфигурации работы модулей приложения
-     */
-    void delete(Parameter parameter);
 }

@@ -2,7 +2,9 @@ package ru.team.up.sup.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import ru.team.up.dto.AppModuleNameDto;
+import ru.team.up.dto.SupParameterTypeDto;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -13,10 +15,8 @@ import java.time.LocalDateTime;
  */
 
 @Entity
-@Getter
-@Setter
+@Data
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -32,7 +32,7 @@ public class Parameter {
 
     @Enumerated(EnumType.STRING)
     @Column
-    private ParameterType parameterType;
+    private SupParameterTypeDto parameterType;
 
     @Column(nullable = false)
     private AppModuleNameDto systemName;
@@ -42,6 +42,13 @@ public class Parameter {
 
     @Column(nullable = false)
     private LocalDate creationDate;
+
+    @Column
+    private Boolean inUse;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column
+    private LocalDate lastUsedDate;
 
     @Column
     private LocalDateTime updateDate;

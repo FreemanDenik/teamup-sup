@@ -1,11 +1,10 @@
 package ru.team.up.sup.core.utils;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.team.up.dto.AppModuleNameDto;
 import ru.team.up.dto.ListSupParameterDto;
+import ru.team.up.dto.SupParameterTypeDto;
 import ru.team.up.sup.core.entity.Parameter;
-import ru.team.up.sup.core.entity.ParameterType;
 import ru.team.up.sup.core.entity.User;
 
 import java.time.LocalDate;
@@ -30,7 +29,7 @@ class ParameterToDtoTest {
     private final Parameter testParam1 = Parameter.builder()
             .id(1L)
             .parameterName("TestParam1")
-            .parameterType(ParameterType.BOOLEAN)
+            .parameterType(SupParameterTypeDto.BOOLEAN)
             .systemName(AppModuleNameDto.TEAMUP_CORE)
             .parameterValue("false")
             .creationDate(LocalDate.now())
@@ -40,7 +39,7 @@ class ParameterToDtoTest {
     private final Parameter testParam2 = Parameter.builder()
             .id(2L)
             .parameterName("TestParam2")
-            .parameterType(ParameterType.INTEGER)
+            .parameterType(SupParameterTypeDto.INTEGER)
             .systemName(AppModuleNameDto.TEAMUP_KAFKA)
             .parameterValue("123")
             .creationDate(LocalDate.now())
@@ -50,7 +49,7 @@ class ParameterToDtoTest {
     private final Parameter testParam3 = Parameter.builder()
             .id(3L)
             .parameterName("TestParam3")
-            .parameterType(ParameterType.INTEGER)
+            .parameterType(SupParameterTypeDto.INTEGER)
             .systemName(AppModuleNameDto.TEAMUP_APP)
             .parameterValue("123")
             .creationDate(LocalDate.now())

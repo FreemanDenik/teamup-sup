@@ -23,4 +23,5 @@ public interface ParameterRepository extends JpaRepository<Parameter, Long> {
     List<Parameter> findByCreationDateBetween(LocalDate date1, LocalDate date2);
 
     List<Parameter> findByUpdateDateBetween(LocalDateTime date1, LocalDateTime date2);
+
 }

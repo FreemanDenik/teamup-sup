@@ -7,11 +7,9 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.team.up.dto.AppModuleNameDto;
 import ru.team.up.dto.ListSupParameterDto;
-import ru.team.up.dto.SupParameterDto;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.utils.ParameterToDto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -72,34 +70,7 @@ public class KafkaSupServiceImpl implements KafkaSupService {
             listSupParameterDtoKafkaTemplate.send(TOPIC, listToSend.getModuleName(), listToSend);
             log.debug("Отправлены параметры в модуль {}", listToSend.getModuleName());
         }
-//        ListSupParameterDto listToSend = new ListSupParameterDto();
-//        for (Parameter param : list) {
-//            listToSend.addParameter(ParameterToDto.convert(param));
-//        }
-//        listSupParameterDtoKafkaTemplate.send(TOPIC, listToSend.getModuleName(), listToSend);
         log.debug("Завершение отправки листа параметров");
     }
 
-    /**
-     * Удаление парамера системы через kafka с предварительной конвертацией в DTO объект
-     * и его отправка с параметром isDeleted = true
-     *
-     * @param parameter -
-     */
-    @Override
-    public void delete(Parameter parameter) {
-        log.debug("Начало отправки удаленного параметра: {}", parameter);
-        if (parameter == null) {
-            log.debug("В метод delete вместо параметра пришел null.");
-            throw new RuntimeException("В метод delete вместо параметра пришел null.");
-        } else {
-            SupParameterDto<?> dto = ParameterToDto.convert(parameter);
-            dto.setUpdateTime(LocalDateTime.now());
-            dto.setDeleted(true);
-            ListSupParameterDto listToSend = new ListSupParameterDto();
-            listToSend.addParameter(dto);
-            listSupParameterDtoKafkaTemplate.send(TOPIC, listToSend.getModuleName(), listToSend);
-            log.debug("Завершение отправки удаленного параметра: {}", parameter);
-        }
-    }
 }

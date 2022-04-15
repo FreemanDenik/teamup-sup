@@ -1,18 +1,25 @@
 package ru.team.up.sup.input.controller.publicController;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import ru.team.up.dto.AppModuleNameDto;
+import ru.team.up.dto.SupParameterTypeDto;
 import ru.team.up.sup.core.entity.Parameter;
-import ru.team.up.sup.core.entity.ParameterType;
+import ru.team.up.sup.core.exception.NoContentException;
 import ru.team.up.sup.core.service.ParameterService;
 import ru.team.up.sup.core.service.UserService;
 
+import java.security.Principal;
+import java.util.Arrays;
+import java.util.List;
+
 @Slf4j
 @Controller
+@RequestMapping("/admin")
 public class PublicAdminParameterController {
 
     private final ParameterService parameterService;
@@ -24,64 +31,45 @@ public class PublicAdminParameterController {
         this.userService = userService;
     }
 
-    @GetMapping("/admin/parameters")
+    @GetMapping()
     public String adminParametersPage(ModelMap model) {
+        List<Parameter> allParams = null;
+        try {
+            allParams = parameterService.getAllParameters();
+        } catch (NoContentException e) {
+            log.debug("Получен пустой лист с параметрами");
+        }
         model.addAttribute("newParameter", new Parameter());
-        model.addAttribute("allParams", parameterService.getAllParameters());
-        model.addAttribute("allSystems", AppModuleNameDto.values());
-        model.addAttribute("allTypes", ParameterType.values());
-        return "newAdmin";
-    }
-
-    @PostMapping("/save")
-    public String createParameter(Parameter parameter,
-                                  @RequestParam(value = "parameterType", required = false) String parameterType,
-                                  @RequestParam(value = "systemName", required = false) String systemName) {
-
-        setFields(parameter, parameterType, systemName);
-
-        log.debug("Добавили параметр с именем {}", parameter.getParameterName());
-
-        parameterService.saveParameter(parameter);
-        return "redirect:/admin/parameters";
+        model.addAttribute("allParams", allParams);
+        return "admin/Admin";
     }
 
     @PostMapping("/edit")
-    public String editParameter(Parameter parameter,
-                                  @RequestParam(value = "parameterType", required = false) String parameterType,
-                                  @RequestParam(value = "systemName", required = false) String systemName) {
-
-        setFields(parameter, parameterType, systemName);
-
-        log.debug("Изменили параметр с именем {}", parameter.getParameterName());
-
+    public String editParameter(@ModelAttribute("parameter") Parameter parameter, Principal principal) {
+        parameter.setUserWhoLastChangeParameters(userService.getUserByName(principal.getName()));
         parameterService.editParameter(parameter);
-        return "redirect:/admin/parameters";
+        return "redirect:/admin";
     }
 
+    @PostMapping("/add")
+    public String createParameter(@ModelAttribute("newParameter") Parameter parameter, Principal principal) {
+        parameter.setUserWhoLastChangeParameters(userService.getUserByName(principal.getName()));
+        parameterService.saveParameter(parameter);
+        return "redirect:/admin";
+    }
 
-    @GetMapping("/delete")
-    public String deleteUser(long id) {
-
-        log.debug("Удалили параметр с id {}", id);
-
+    @GetMapping("/delete/{id}")
+    public String deleteUser(@PathVariable long id) {
         parameterService.deleteParameter(id);
-        return "redirect:/admin/parameters";
+        return "redirect:/admin";
     }
 
-    @GetMapping("/findById")
-    @ResponseBody
-    public Parameter findOne(Long id) {
-        return parameterService.getParameterById(id);
-    }
-
-
-    public void setFields(Parameter parameter, String parameterType, String systemName) {
-
-        parameter.setParameterType(ParameterType.valueOf(parameterType));
-        parameter.setSystemName(AppModuleNameDto.valueOf(systemName));
-        parameter.setUserWhoLastChangeParameters(userService.getUserByName(
-                SecurityContextHolder.getContext().
-                        getAuthentication().getName()));
+    @ModelAttribute
+    public void addAttributes(Principal principal, Model model) {
+        model.addAttribute("principal", principal);
+        model.addAttribute("allSystems", AppModuleNameDto.values());
+        model.addAttribute("systemsCount", Arrays.stream(AppModuleNameDto.values()).count());
+        model.addAttribute("allTypes", SupParameterTypeDto.values());
+        model.addAttribute("typesCount", Arrays.stream(SupParameterTypeDto.values()).count());
     }
 }
