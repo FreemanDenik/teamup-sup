@@ -14,7 +14,7 @@
 //import java.time.LocalDateTime;
 //import java.time.LocalTime;
 //
-//import static ru.team.up.dto.SupParameterTypeDto.*;
+//import static ru.team.up.dto.SupParameterType.*;
 //
 //@Component
 //@Transactional

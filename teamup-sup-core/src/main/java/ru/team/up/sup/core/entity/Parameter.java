@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.team.up.dto.AppModuleNameDto;
-import ru.team.up.dto.SupParameterTypeDto;
+import ru.team.up.dto.SupParameterType;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -32,7 +32,7 @@ public class Parameter {
 
     @Enumerated(EnumType.STRING)
     @Column
-    private SupParameterTypeDto parameterType;
+    private SupParameterType parameterType;
 
     @Column(nullable = false)
     private AppModuleNameDto systemName;
