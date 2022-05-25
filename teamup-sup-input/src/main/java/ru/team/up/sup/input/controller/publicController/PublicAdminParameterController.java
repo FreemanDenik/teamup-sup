@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import ru.team.up.dto.AppModuleNameDto;
-import ru.team.up.dto.SupParameterTypeDto;
+import ru.team.up.dto.SupParameterType;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.exception.NoContentException;
 import ru.team.up.sup.core.service.ParameterService;
@@ -69,7 +69,7 @@ public class PublicAdminParameterController {
         model.addAttribute("principal", principal);
         model.addAttribute("allSystems", AppModuleNameDto.values());
         model.addAttribute("systemsCount", Arrays.stream(AppModuleNameDto.values()).count());
-        model.addAttribute("allTypes", SupParameterTypeDto.values());
-        model.addAttribute("typesCount", Arrays.stream(SupParameterTypeDto.values()).count());
+        model.addAttribute("allTypes", SupParameterType.values());
+        model.addAttribute("typesCount", Arrays.stream(SupParameterType.values()).count());
     }
 }

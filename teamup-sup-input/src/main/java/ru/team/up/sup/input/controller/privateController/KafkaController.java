@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.team.up.dto.AppModuleNameDto;
-import ru.team.up.dto.SupParameterTypeDto;
+import ru.team.up.dto.SupParameterType;
 import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.service.KafkaSupService;
 
@@ -64,7 +64,7 @@ public class KafkaController {
         kafkaProducerSupService.send(Parameter.builder()
                 .id(1L)
                 .parameterName("testName")
-                .parameterType(SupParameterTypeDto.STRING)
+                .parameterType(SupParameterType.STRING)
                 .parameterValue("testValue")
                 .systemName(AppModuleNameDto.TEAMUP_CORE)
                 .creationDate(LocalDate.now())
@@ -73,7 +73,7 @@ public class KafkaController {
         kafkaProducerSupService.send(Parameter.builder()
                 .id(2L)
                 .parameterName("testName2")
-                .parameterType(SupParameterTypeDto.STRING)
+                .parameterType(SupParameterType.STRING)
                 .parameterValue("testValue")
                 .systemName(AppModuleNameDto.TEAMUP_CORE)
                 .creationDate(LocalDate.now())
@@ -82,7 +82,7 @@ public class KafkaController {
         kafkaProducerSupService.send(Parameter.builder()
                 .id(3L)
                 .parameterName("testName3")
-                .parameterType(SupParameterTypeDto.STRING)
+                .parameterType(SupParameterType.STRING)
                 .parameterValue("Ok")
                 .systemName(AppModuleNameDto.TEAMUP_DTO)
                 .creationDate(LocalDate.now())
