@@ -39,6 +39,7 @@
                             <th scope="col">Parameter Type</th>
                             <th scope="col">System Name</th>
                             <th scope="col">Parameter Value</th>
+                            <th scope="col">isList</th>
                             <th scope="col">Creation Date</th>
                             <th scope="col">Update Date</th>
                             <th scope="col">Last editor</th>
@@ -55,6 +56,7 @@
                             <td th:text="${parameter.getParameterType()}"></td>
                             <td th:text="${parameter.getSystemName()}"></td>
                             <td th:text="${parameter.getParameterValue()}"></td>
+                            <td th:text="${parameter.getIsList()}"></td>
                             <td th:text="${parameter.getCreationDate()}"></td>
                             <td th:text="${parameter.getUpdateDate()}"></td>
                             <td th:text="${parameter.getUserWhoLastChangeParameters()}"></td>
@@ -87,6 +89,15 @@
                             <input type="text" class="form-control" th:value="${newParameter.parameterName}"
                                    id="parameterName"
                                    th:name="parameterName">
+
+
+                            <label class="form-label">Is List</label>
+                            <select multiple class="form-control form-control-sm"
+                                    id="isList" name="isList" size="2" >
+                                <option value="1">True</option>
+                                <option value="0">False</option>
+                            </select>
+
 
                             <label for="parameterType" class="form-label">Parameter Type</label>
                             <select id="parameterType" class="form-select" th:value="${newParameter.parameterType}"

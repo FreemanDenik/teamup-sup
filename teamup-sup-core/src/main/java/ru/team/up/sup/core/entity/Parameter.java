@@ -9,11 +9,11 @@ import ru.team.up.dto.SupParameterType;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Сущность параметр
  */
-
 @Entity
 @Data
 @Builder
@@ -38,7 +38,11 @@ public class Parameter {
     private AppModuleNameDto systemName;
 
     @Column(nullable = false)
-    private String parameterValue;
+    @ElementCollection
+    private List<String> parameterValue;
+
+    @Column(nullable = false)
+    private Boolean isList;
 
     @Column(nullable = false)
     private LocalDate creationDate;
@@ -56,4 +60,5 @@ public class Parameter {
     @ManyToOne
     @JoinColumn(name = "user_who_last_change_parameters")
     private User userWhoLastChangeParameters;
+
 }
