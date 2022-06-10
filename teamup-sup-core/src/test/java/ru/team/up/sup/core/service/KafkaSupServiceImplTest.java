@@ -17,6 +17,7 @@ import ru.team.up.sup.core.utils.ParameterToDto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -28,10 +29,14 @@ class KafkaSupServiceImplTest {
 
     @Mock
     private KafkaTemplate<AppModuleNameDto, ListSupParameterDto> kafkaTemplate;
+
     private KafkaSupService underTest;
+
     @Value(value = "${kafka.topic.name}")
     private String testTopic;
+
     private ListSupParameterDto listToSend;
+
     private final User testUser = User.builder()
             .id(1L)
             .name("TestName")
@@ -40,32 +45,38 @@ class KafkaSupServiceImplTest {
             .password("testPass")
             .lastAccountActivity(LocalDateTime.now())
             .build();
+
     private final Parameter testParam1 = Parameter.builder()
             .id(1L)
             .parameterName("TestParam1")
             .parameterType(SupParameterType.BOOLEAN)
             .systemName(AppModuleNameDto.TEAMUP_CORE)
-            .parameterValue("false")
+            .isList(false)
+            .parameterValue(Collections.singletonList("false"))
             .creationDate(LocalDate.now())
             .updateDate(LocalDateTime.now())
             .userWhoLastChangeParameters(testUser)
             .build();
+
     private final Parameter testParam2 = Parameter.builder()
             .id(2L)
             .parameterName("TestParam2")
             .parameterType(SupParameterType.INTEGER)
             .systemName(AppModuleNameDto.TEAMUP_KAFKA)
-            .parameterValue("123")
+            .isList(false)
+            .parameterValue(Collections.singletonList("123"))
             .creationDate(LocalDate.now())
             .updateDate(LocalDateTime.now())
             .userWhoLastChangeParameters(testUser)
             .build();
+
     private final Parameter testParam3 = Parameter.builder()
             .id(3L)
             .parameterName("TestParam3")
             .parameterType(SupParameterType.STRING)
             .systemName(AppModuleNameDto.TEAMUP_SUP)
-            .parameterValue("Hello world!")
+            .isList(false)
+            .parameterValue(Collections.singletonList("Hello world!"))
             .creationDate(LocalDate.now())
             .updateDate(LocalDateTime.now())
             .userWhoLastChangeParameters(testUser)
