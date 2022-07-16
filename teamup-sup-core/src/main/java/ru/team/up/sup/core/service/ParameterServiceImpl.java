@@ -12,6 +12,7 @@ import ru.team.up.sup.core.entity.Parameter;
 import ru.team.up.sup.core.entity.User;
 import ru.team.up.sup.core.exception.NoContentException;
 import ru.team.up.sup.core.repositories.ParameterRepository;
+import ru.team.up.sup.core.utils.ParameterToDto;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
@@ -86,10 +87,18 @@ public class ParameterServiceImpl implements ParameterService {
         log.debug("Старт метода Parameter saveParameter(Parameter parameter) с параметром {}", parameter);
         parameter.setCreationDate(LocalDate.now());
         parameter.setUpdateDate(LocalDateTime.now());
+        if (!parameter.getIsList()) {
+            parameter.setParameterValue(Collections.singletonList(parameter.getParameterValue().get(0)));
+
+        } else {
+            parameter.setParameterValue(parameter.getParameterValue());
+
+        }
         Parameter savedParam = parameterRepository.save(parameter);
         kafkaSupService.send(parameter);
         log.debug("Сохранили параметр {} в БД", savedParam);
         return savedParam;
+
     }
 
     @Override
@@ -180,6 +189,7 @@ public class ParameterServiceImpl implements ParameterService {
                 .systemName(defaultParam.getSystemName())
                 //.parameterValue(defaultParam.getParameterValue().toString())
                 .parameterValue(Collections.singletonList(defaultParam.getParameterValue().toString()))
+                .isList(defaultParam.getIsList())
                 .creationDate(LocalDate.now())
                 .inUse(true)
                 .lastUsedDate(LocalDate.now())

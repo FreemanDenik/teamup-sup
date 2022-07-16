@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.team.up.dto.AppModuleNameDto;
 import ru.team.up.dto.SupParameterType;
+import ru.team.up.sup.core.utils.ParameterToDto;
 
 import javax.persistence.*;
 import java.time.LocalDate;

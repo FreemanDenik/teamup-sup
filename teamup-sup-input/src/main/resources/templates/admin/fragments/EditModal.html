@@ -53,6 +53,12 @@
                         <input type="text" class="form-control" th:value="${parameter.parameterValue}"
                                id="parameterValue"
                                th:name="parameterValue">
+                        <label for="isList" class="form-label">isList</label>
+                        <select multiple class="form-control form-control-sm"
+                                id="isList" name="isList" size="2" >
+                            <option value="1">True</option>
+                            <option value="0">False</option>
+                        </select>
 
                         <label for="InUse" class="form-label">In Use</label>
                         <input type="text" class="form-control" th:value="${parameter.inUse}" id="InUse" disabled

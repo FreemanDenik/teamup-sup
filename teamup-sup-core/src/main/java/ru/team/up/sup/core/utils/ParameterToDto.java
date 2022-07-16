@@ -19,12 +19,14 @@ public class ParameterToDto {
                 .parameterName(parameter.getParameterName())
                 .parameterType(parameter.getParameterType())
                 .systemName(parameter.getSystemName())
+                .isList(parameter.getIsList())
                 .updateTime(parameter.getUpdateDate())
                 .build();
         switch (dto.getParameterType()) {
             case DOUBLE:
                 if(!parameter.getIsList()) {
                     dto.setParameterValue(Double.parseDouble(parameter.getParameterValue().get(0)));
+                   
                 } else {
                     dto.setParameterValue(convertStringList(parameter.getParameterValue(), Double::parseDouble));
                 }

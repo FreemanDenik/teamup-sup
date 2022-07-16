@@ -57,7 +57,7 @@ public class TeamupAppApplication {
                 .parameterName("TestParam1")
                 .parameterType(SupParameterType.DOUBLE)
                 .systemName(AppModuleNameDto.TEAMUP_CORE)
-                .isList(true)
+                .isList(false)
                 .parameterValue(stringList1)
                 .creationDate(LocalDate.now())
                 .inUse(false)
