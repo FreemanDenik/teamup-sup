@@ -19,6 +19,7 @@ import ru.team.up.sup.core.service.KafkaSupService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 
 @Slf4j
 @Tag(name = "Kafka Private Controller", description = "Kafka API")
@@ -65,7 +66,7 @@ public class KafkaController {
                 .id(1L)
                 .parameterName("testName")
                 .parameterType(SupParameterType.STRING)
-                .parameterValue("testValue")
+                .parameterValue(Collections.singletonList("testValue"))
                 .systemName(AppModuleNameDto.TEAMUP_CORE)
                 .creationDate(LocalDate.now())
                 .updateDate(LocalDateTime.now())
@@ -74,7 +75,7 @@ public class KafkaController {
                 .id(2L)
                 .parameterName("testName2")
                 .parameterType(SupParameterType.STRING)
-                .parameterValue("testValue")
+                .parameterValue(Collections.singletonList("testValue"))
                 .systemName(AppModuleNameDto.TEAMUP_CORE)
                 .creationDate(LocalDate.now())
                 .updateDate(LocalDateTime.now())
@@ -83,7 +84,7 @@ public class KafkaController {
                 .id(3L)
                 .parameterName("testName3")
                 .parameterType(SupParameterType.STRING)
-                .parameterValue("Ok")
+                .parameterValue(Collections.singletonList("Ok"))
                 .systemName(AppModuleNameDto.TEAMUP_DTO)
                 .creationDate(LocalDate.now())
                 .updateDate(LocalDateTime.now())

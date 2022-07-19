@@ -8,29 +8,49 @@ import ru.team.up.sup.core.entity.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
 public class ParameterToDto {
+
     public static SupParameterDto<?> convert(Parameter parameter) {
         SupParameterDto dto = SupParameterDto.builder()
                 .parameterName(parameter.getParameterName())
                 .parameterType(parameter.getParameterType())
                 .systemName(parameter.getSystemName())
+                .isList(parameter.getIsList())
                 .updateTime(parameter.getUpdateDate())
                 .build();
         switch (dto.getParameterType()) {
             case DOUBLE:
-                dto.setParameterValue(Double.parseDouble(parameter.getParameterValue()));
+                if(!parameter.getIsList()) {
+                    dto.setParameterValue(Double.parseDouble(parameter.getParameterValue().get(0)));
+                   
+                } else {
+                    dto.setParameterValue(convertStringList(parameter.getParameterValue(), Double::parseDouble));
+                }
                 break;
             case BOOLEAN:
-                dto.setParameterValue(Boolean.parseBoolean(parameter.getParameterValue()));
+                if(!parameter.getIsList()) {
+                    dto.setParameterValue(Boolean.parseBoolean(parameter.getParameterValue().get(0)));
+                } else {
+                    dto.setParameterValue(convertStringList(parameter.getParameterValue(), Boolean::parseBoolean));
+                }
                 break;
             case INTEGER:
-                dto.setParameterValue(Integer.parseInt(parameter.getParameterValue()));
+                if(!parameter.getIsList()) {
+                    dto.setParameterValue(Integer.parseInt(parameter.getParameterValue().get(0)));
+                } else {
+                    dto.setParameterValue(convertStringList(parameter.getParameterValue(), Integer::parseInt));
+                }
                 break;
             case STRING:
-                dto.setParameterValue(parameter.getParameterValue());
+                if(!parameter.getIsList()) {
+                    dto.setParameterValue(parameter.getParameterValue().get(0));
+                } else {
+                    dto.setParameterValue(parameter.getParameterValue());
+                }
                 break;
         }
         return dto;
@@ -65,4 +85,12 @@ public class ParameterToDto {
         log.debug("Размер результирующего листа {}", resultList.size());
         return resultList;
     }
+
+    public static <T, U> List<U> convertStringList(List<T> listOfString, Function<T, U> function)
+    {
+        return listOfString.stream()
+                .map(function)
+                .collect(Collectors.toList());
+    }
+
 }

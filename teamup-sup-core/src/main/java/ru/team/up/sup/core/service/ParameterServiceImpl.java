@@ -1,6 +1,5 @@
 package ru.team.up.sup.core.service;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,15 +7,17 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.team.up.dto.AppModuleNameDto;
 import ru.team.up.dto.ListSupParameterDto;
 import ru.team.up.dto.SupParameterDto;
+import ru.team.up.dto.SupParameterType;
 import ru.team.up.sup.core.entity.Parameter;
+import ru.team.up.sup.core.entity.User;
 import ru.team.up.sup.core.exception.NoContentException;
 import ru.team.up.sup.core.repositories.ParameterRepository;
+import ru.team.up.sup.core.utils.ParameterToDto;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -86,10 +87,18 @@ public class ParameterServiceImpl implements ParameterService {
         log.debug("Старт метода Parameter saveParameter(Parameter parameter) с параметром {}", parameter);
         parameter.setCreationDate(LocalDate.now());
         parameter.setUpdateDate(LocalDateTime.now());
+        if (!parameter.getIsList()) {
+            parameter.setParameterValue(Collections.singletonList(parameter.getParameterValue().get(0)));
+
+        } else {
+            parameter.setParameterValue(parameter.getParameterValue());
+
+        }
         Parameter savedParam = parameterRepository.save(parameter);
         kafkaSupService.send(parameter);
         log.debug("Сохранили параметр {} в БД", savedParam);
         return savedParam;
+
     }
 
     @Override
@@ -178,12 +187,65 @@ public class ParameterServiceImpl implements ParameterService {
                 .parameterName(defaultParam.getParameterName())
                 .parameterType(defaultParam.getParameterType())
                 .systemName(defaultParam.getSystemName())
-                .parameterValue(defaultParam.getParameterValue().toString())
+                //.parameterValue(defaultParam.getParameterValue().toString())
+                .parameterValue(Collections.singletonList(defaultParam.getParameterValue().toString()))
+                .isList(defaultParam.getIsList())
                 .creationDate(LocalDate.now())
                 .inUse(true)
                 .lastUsedDate(LocalDate.now())
                 .build());
         log.debug("Параметр {} добавлен в БД.", defaultParam.getParameterName());
+    }
+
+    //Добавление тестовых параметров в БД
+    @PostConstruct
+    void create() {
+        User testUser = User.builder()
+                .id(1L)
+                .name("TestName")
+                .lastName("TestLastName")
+                .email("test@mail.com")
+                .password("testPass")
+                .lastAccountActivity(LocalDateTime.now())
+                .build();
+
+        List<String> stringList1 = new ArrayList<>();
+        stringList1.addAll(Arrays.asList("a", "b", "c"));
+
+        List<String> stringList2 = new ArrayList<>();
+        stringList2.add("10");
+
+        Parameter parameter1 = Parameter.builder()
+                .id(1L)
+                .parameterName("TestParam1")
+                .parameterType(SupParameterType.STRING)
+                .systemName(AppModuleNameDto.TEAMUP_CORE)
+                .isList(true)
+                .parameterValue(stringList1)
+                .creationDate(LocalDate.now())
+                .inUse(false)
+                .lastUsedDate(null)
+                .updateDate(LocalDateTime.now())
+                .userWhoLastChangeParameters(testUser)
+                .build();
+
+        Parameter parameter2 = Parameter.builder()
+                .id(2L)
+                .parameterName("TestParam2")
+                .parameterType(SupParameterType.INTEGER)
+                .systemName(AppModuleNameDto.TEAMUP_CORE)
+                .isList(false)
+                .parameterValue(stringList2)
+                .creationDate(LocalDate.now())
+                .inUse(false)
+                .lastUsedDate(null)
+                .updateDate(LocalDateTime.now())
+                .userWhoLastChangeParameters(testUser)
+                .build();
+
+        parameterRepository.save(parameter1);
+        parameterRepository.save(parameter2);
+
     }
 
 }
