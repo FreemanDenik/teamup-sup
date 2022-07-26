@@ -13,7 +13,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class ParameterToDto {
-
+    /**
+     * Метод для конвертации параметра Parameter parameter в  SupParameterDto<?> dto
+     * С помощью билдера собирается  SupParameterDto<?> dto
+     * Билдер включает в себя метод getParameterType(), значение которого проходит через цикл для получения содержимого приходящих параметров
+     * В зависимости от значения isList - цикл парсит либо единственное значение параметра, либо его множество значений
+     */
     public static SupParameterDto<?> convert(Parameter parameter) {
         SupParameterDto dto = SupParameterDto.builder()
                 .parameterName(parameter.getParameterName())
@@ -24,29 +29,29 @@ public class ParameterToDto {
                 .build();
         switch (dto.getParameterType()) {
             case DOUBLE:
-                if(!parameter.getIsList()) {
+                if (!parameter.getIsList()) {
                     dto.setParameterValue(Double.parseDouble(parameter.getParameterValue().get(0)));
-                   
+
                 } else {
                     dto.setParameterValue(convertStringList(parameter.getParameterValue(), Double::parseDouble));
                 }
                 break;
             case BOOLEAN:
-                if(!parameter.getIsList()) {
+                if (!parameter.getIsList()) {
                     dto.setParameterValue(Boolean.parseBoolean(parameter.getParameterValue().get(0)));
                 } else {
                     dto.setParameterValue(convertStringList(parameter.getParameterValue(), Boolean::parseBoolean));
                 }
                 break;
             case INTEGER:
-                if(!parameter.getIsList()) {
+                if (!parameter.getIsList()) {
                     dto.setParameterValue(Integer.parseInt(parameter.getParameterValue().get(0)));
                 } else {
                     dto.setParameterValue(convertStringList(parameter.getParameterValue(), Integer::parseInt));
                 }
                 break;
             case STRING:
-                if(!parameter.getIsList()) {
+                if (!parameter.getIsList()) {
                     dto.setParameterValue(parameter.getParameterValue().get(0));
                 } else {
                     dto.setParameterValue(parameter.getParameterValue());
@@ -56,6 +61,9 @@ public class ParameterToDto {
         return dto;
     }
 
+    /**
+     * Метод парсящий из листа параметров с конвертацией в дто
+     */
     public static List<ListSupParameterDto> parseParameterListToListsDto(List<Parameter> parameterList) {
         if (parameterList == null || parameterList.isEmpty()) {
             log.debug("На вход метода parseParameterListToListsDto пришел null или пустой лист");
@@ -86,8 +94,10 @@ public class ParameterToDto {
         return resultList;
     }
 
-    public static <T, U> List<U> convertStringList(List<T> listOfString, Function<T, U> function)
-    {
+    /**
+     * Метод для конвертации List<String> parameterValue
+     */
+    public static <T, U> List<U> convertStringList(List<T> listOfString, Function<T, U> function) {
         return listOfString.stream()
                 .map(function)
                 .collect(Collectors.toList());
