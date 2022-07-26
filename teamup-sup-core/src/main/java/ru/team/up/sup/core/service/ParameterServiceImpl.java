@@ -178,7 +178,9 @@ public class ParameterServiceImpl implements ParameterService {
                 parameter.getSystemName(),
                 parameter.getLastUsedDate());
     }
-
+    /**
+     * Метод принимающий defaultParam из репозитория Core, для добавления их в базу данных
+     */
     private void addNewDefaultToDb(SupParameterDto defaultParam) {
         log.debug("Параметр {} используется в модуле {}, но его нет в БД.",
                 defaultParam.getParameterName(),
